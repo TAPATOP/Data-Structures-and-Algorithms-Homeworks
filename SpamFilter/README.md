@@ -1,11 +1,10 @@
-# Trie
-Trie built for the Data Structures and Algorithms class' homework
+# SpamFilter
+This is pretty much a Trie built for the Data Structures and Algorithms class' homework. The task was to create an anti- spam filter based on a dictionary of PHRASES(hence " " being a legit character of the trie dictionary) with given values.
+
 My idea sprung out 8 hours before I had to send the homework in. The idea is to have "reading heads", which would move according to the read letter and in case of a match to a word in the dictionary, to stop and check whether there is a head that was activated before the current one that is still working. If there was no previous halted head, the current head returns the value it has reached and deactivates all active heads. Every time a head reaches a delimiter(the task's case- a space) a new head would be activated.
 The presented version here is not the latest, since that one was borked and I hadn't discovered the miracle of GitHub yet.
+
 The task description is as follows(Bulgarian):
-
-TL;DR: Anti- spam based on a dictionary of PHRASES(hence " " being a legit character of the trie dictionary) with set values
-
 
 Напишете програма, която приема като аргументи от командния ред множество имена на файлове (поне два). Първият файл представлява речник от думи или фрази. Валидните символи, участващи в думите са малки латински букви и интервал. За всеки елемент от речника е дадена оценка - цяло число (може и отрицателно). То показва коефициент на принадлежност на думата към категорията на речника - например спам или текст за програмиране или нещо друго. Всяка фраза е на нов ред.
 
