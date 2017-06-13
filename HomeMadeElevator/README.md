@@ -2,6 +2,8 @@
 
 For this task we had to simulate the work of an elevator- we were given commands from the inside as well from the outside. They were read directly from a file, alongside time marks, which were meant to simulate the elevator working in a real- time scenario. Full description below.
 
+P.S: The "-better" files change the rules according to which the elevator would pick passengers up while already in motion- For example, if he is moving from floor 2 to floor 7 and comes across a person at the 5th floor, he would pick him up if he wants to travel upwards. If he wants to travel downwards, he will NOT be picked up, unless the elevator is travelling downwards as well.
+
 Нека имаме сграда с N етажа и в нея има асансьор, който обслужва заявките в реда, в който са постъпили (настинат е бутон). Скоростта на асансьора е константна и е 0.2 етажа в секунда (т.е минава един етаж за 5 секунди). Времето за престой на етаж приемете за 0.
 
 Целта на вашата програма е да реализира симулация на работата на асансьора при дадени заявки за към него. 
