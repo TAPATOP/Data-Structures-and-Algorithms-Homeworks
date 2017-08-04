@@ -16,12 +16,13 @@
 //
 // /brief
 // This program implements a very simple linked list, creates two linked lists of that same type using variables for easier testing
-// and then sorts them in list_sort().
+// and then sorts their intersection into a new dynamically allocated list using list_sort().
 // /struct node
-// Nodes which are used to create a linked list. It has an integrated destructor because nobody likes memory leaks
+// Nodes which are used to create a very basic linked list. It doesnt even have any methods( including a user- defined destructor)
+// because it's just a makeshift list that exists only to show that list_sort() works.
 // /list_sort()
-// Takes two addressess of the first elements of two lists. Creates a new list and includes all the elements that are
-// present in both given lists. Keep in mind that the new list does not save multiple copies of the same value( e.g. does not
+// Takes two addressess of the first elements of two lists. Dynamically creates a new list and includes all the elements that are
+// present in both given lists(intersection). Keep in mind that the new list does not save multiple copies of the same value( e.g. does not
 // contain nodes holding the same data) since that's what I understand by "intersection". Returns the address of the first node
 // of the new list.
 //
@@ -31,14 +32,7 @@
 struct node
 {
 	node* next;
-	int data;
-	~node()
-	{
-		if (next != nullptr)
-		{
-			delete next;
-		}
-	}
+	double data;
 };
 
 node* list_sort(node* firstList, node* secondList)
@@ -126,17 +120,17 @@ int main()
 {
 	node firstList, secondList;
 
-	int valueOne1 = 2;
-	int valueOne2 = 1;
-	int valueOne3 = 4;
-	int valueOne4 = 3;
-	int valueOne5 = 9;
-
-	int valueTwo1 = 3;
-	int valueTwo2 = 2;
-	int valueTwo3 = 1;
-	int valueTwo4 = 9;
-	int valueTwo5 = 0;
+	double valueOne1 = 2;
+	double valueOne2 = 1;
+	double valueOne3 = 4;
+	double valueOne4 = 3;
+	double valueOne5 = 9.1;
+	
+	double valueTwo1 = 3;
+	double valueTwo2 = 2;
+	double valueTwo3 = 1;
+	double valueTwo4 = 9.1;
+	double valueTwo5 = 0;
 
 	firstList.data = valueOne1;
 	firstList.next = &(node());
@@ -165,18 +159,14 @@ int main()
 	secondList.next->next->next->next = &(node());
 	secondList.next->next->next->next->data = valueTwo5;
 
-	while (true)
+	node* newList = list_sort(&firstList, &secondList);
+	node* newListCurrent = newList;
+	
+	while (newListCurrent != nullptr)
 	{
-		node* newList = list_sort(&firstList, &secondList);
-		node* newListCurrent = newList;
-		delete newList;
+		std::cout << newListCurrent->data << std::endl;
+		newListCurrent = newListCurrent->next;
 	}
-
-	//while (newListCurrent != nullptr)
-	//{
-	//	std::cout << newListCurrent->data << std::endl;
-	//	newListCurrent = newListCurrent->next;
-	//}
 
 	return 0;
 }
