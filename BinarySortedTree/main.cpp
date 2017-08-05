@@ -12,8 +12,19 @@
 *
 */
 
-// This program reads a text, converts it's numbers to ints( anything different than a number and a '-' is considered
-// a delimeter)
+// /BST sort
+// This program reads a text in 1024B - 1050B chunks, converts it's numbers to ints( anything different than a number and a '-' is 
+// considered a delimeter) and sorts them in a binary sorted tree. 
+// /repetition- free BST
+// It makes sure there are no repetitions by going through the tree first to check whether it would meet a node 
+// with the same value. This may seem like unneeded overhead but it removes issues with automatically counting 
+// the number of children a node has( see below).
+// /counts subtrees with exactly N nodes
+// Saves the amount of nodes every node has while adding a number to the tree beneath it, so when we need 
+// that info we can reach it fast. This removes the need of recursive counting of all children nodes. The children 
+// node check is still recursive tho..
+// /saves inplace
+// Saves the sorted data in the same file it was loaded from( not necessarily in a sorted way) and separates entries with a " ".
 
 #include<iostream>
 #include<fstream>
@@ -22,8 +33,19 @@
 
 int main(int argc, char** argv)
 {
-	std::ifstream input;
-	input.open("file2.txt");
+	if (argc != 2)
+	{
+		std::cout << "Read the instructions pls" << std::endl;
+		return 1;
+	}
+
+	std::ifstream file;
+	file.open(argv[1]);
+	if (!file)
+	{
+		std::cout << "There is an issue with your file??" << std::endl;
+		return 2;
+	}
 
 	BinarySortedTree alpha;
 
@@ -33,12 +55,12 @@ int main(int argc, char** argv)
 	int additionalReadSize = 0;
 	unsigned int extracted = 0;
 
-	while (input.read(buffer, readCharsSize) || input.gcount() != 0)
+	while (file.read(buffer, readCharsSize) || file.gcount() != 0)
 	{
 		additionalReadSize = 0;
-		extracted = (unsigned int)input.gcount();
+		extracted = (unsigned int)file.gcount();
 
-		if (input.eof())
+		if (file.eof())
 		{
 			buffer[extracted] = '\0';
 		}
@@ -48,8 +70,8 @@ int main(int argc, char** argv)
 			while (buffer[(readCharsSize + additionalReadSize) - 1] != ' ' && buffer[(readCharsSize + additionalReadSize) - 1] != '\n')
 			{
 				additionalReadSize++;
-				input.get(buffer[(readCharsSize + additionalReadSize) - 1]);
-				if (input.eof()) break;
+				file.get(buffer[(readCharsSize + additionalReadSize) - 1]);
+				if (file.eof()) break;
 			}
 			buffer[readCharsSize + additionalReadSize] = '\0';
 		}
@@ -62,6 +84,14 @@ int main(int argc, char** argv)
 	std::cout << "N = "; std::cin >> N;
 	
 	std::cout << alpha.numberOfSubtreesWithNNodes(N) << std::endl;
+
+	file.close();
+
+	// "Saving" part below
+	std::ofstream output;
+	output.open(argv[1]);
+
+	alpha.saveToFile(output);
 
 	return 0;
 }

@@ -18,6 +18,8 @@ void BinarySortedTree::addNumber(int number)
 	node* current = first;
 	bool addToLeft = 0;
 
+	if (isNumberAlreadyInTree(number)) return;
+
 	while (true)
 	{
 		if (number < current->data)
@@ -36,7 +38,7 @@ void BinarySortedTree::addNumber(int number)
 		}
 		else
 		{
-			if (number == current->data) return;
+			//if (number == current->data) return;
 
 			if (current->right == nullptr)
 			{
@@ -116,6 +118,11 @@ unsigned int BinarySortedTree::numberOfSubtreesWithNNodes(unsigned int N)
 	return checkNodeCount(first, N);
 }
 
+void BinarySortedTree::saveToFile(std::ofstream &outputFile)
+{
+	recursiveWriteToFile(first, outputFile);
+}
+
 
 BinarySortedTree::~BinarySortedTree()
 {
@@ -128,4 +135,36 @@ unsigned int BinarySortedTree::checkNodeCount(node * address, unsigned int N)
 
 	return checkNodeCount(address->left, N) + checkNodeCount(address->right, N);
 	// recursion is bad for your health ;(
+}
+
+bool BinarySortedTree::isNumberAlreadyInTree(int number)
+{
+	node* current = first;
+
+	while (current != nullptr)
+	{
+		if (current->data == number)
+		{
+			return true;
+		}
+		if (number < current->data)
+		{
+			current = current->left;
+		}
+		else
+		{
+			current = current->right;
+		}
+	}
+
+	return false;
+}
+
+void BinarySortedTree::recursiveWriteToFile(node * nodeAddress, std::ofstream& outputFile)
+{
+	if (nodeAddress == nullptr) return;
+	outputFile << nodeAddress->data << " "; // I know it's slow :<
+	
+	recursiveWriteToFile(nodeAddress->left, outputFile);
+	recursiveWriteToFile(nodeAddress->right, outputFile);
 }

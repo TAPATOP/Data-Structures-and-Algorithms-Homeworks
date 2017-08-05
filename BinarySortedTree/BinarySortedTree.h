@@ -1,6 +1,7 @@
 #pragma once
 
-#include"iostream"
+#include<iostream>
+#include<fstream>
 
 class BinarySortedTree
 {
@@ -14,9 +15,13 @@ public:
 
 	unsigned int numberOfSubtreesWithNNodes(unsigned int N);
 
+	void saveToFile(std::ofstream& outputFile);
+
 	~BinarySortedTree();
 private:
 	unsigned int checkNodeCount(node* address, unsigned int N);
+	bool isNumberAlreadyInTree(int number);
+	void recursiveWriteToFile(node* nodeAddress, std::ofstream &outputFile);
 private:
 	struct node
 	{
