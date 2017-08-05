@@ -1,4 +1,7 @@
 #pragma once
+
+#include"iostream"
+
 class BinarySortedTree
 {
 private: struct node;
@@ -7,6 +10,7 @@ public:
 	BinarySortedTree();
 
 	void addNumber(int number);
+	void addNumbersByString(char* text);
 
 	unsigned int numberOfSubtreesWithNNodes(unsigned int N);
 

@@ -62,6 +62,55 @@ void BinarySortedTree::addNumber(int number)
 	}
 }
 
+void BinarySortedTree::addNumbersByString(char * text)
+{
+	int textSize = std::strlen(text);
+	bool lastSymbolIsDelimeter = 0;
+
+	if (text[textSize - 1] < '0' || text[textSize - 1] > '9')
+	{
+		lastSymbolIsDelimeter = 1;
+	}
+
+	int index = 0;
+	int number = 0;
+	bool isNegative = 0;
+
+	char currentChar;
+
+	while (text[index] != '\0')
+	{
+		currentChar = text[index];
+
+		if (currentChar == '-')
+		{
+			isNegative = 1;
+			index++;
+			continue;
+		}
+
+		if ((currentChar >= '0' && currentChar <= '9'))
+		{
+			number = number * 10 + (int)(currentChar - '0');
+		}
+		else
+		{
+			if (isNegative) number = -number;
+
+			addNumber(number);
+			number = 0;
+			isNegative = 0;
+		}
+		index++;
+	}
+	if (!lastSymbolIsDelimeter)
+	{
+		if (isNegative) number = -number;
+
+		addNumber(number);
+	}
+}
+
 unsigned int BinarySortedTree::numberOfSubtreesWithNNodes(unsigned int N)
 {
 	return checkNodeCount(first, N);
