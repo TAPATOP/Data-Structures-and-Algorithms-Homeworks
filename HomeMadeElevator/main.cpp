@@ -49,7 +49,7 @@ int main(int argc, char** argv)
 	int index = 0;
 
 	input >> word;
-	// ÒODO: Proper reading
+
 	while (!input.eof())
 	{
 		strcat_s(word, " ");

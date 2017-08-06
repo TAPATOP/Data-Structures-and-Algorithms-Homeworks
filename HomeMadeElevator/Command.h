@@ -34,7 +34,7 @@ public:
 	~Command();
 private:
 	short direction;
-	unsigned short floor; // TODO: rename as destination?
+	unsigned short floor;
 	unsigned short time;
 };
 
