@@ -23,53 +23,44 @@ Command::Command()
 	time = 0;
 }
 
-void Command::readCommand(PseudoString command)
+void Command::readCommand(const char* command)
 {
+	PseudoString direction = "";
+	int i = 0;
+
 	if (command[0] == 'c')
 	{
-		PseudoString direction = "";
+		i = 5;
 
-		int i = 5;
-
-		while (command[i] != ' ')
+		if (command[i] == 'd')
 		{
-			direction += command[i];
-			i++;
+			direction = "down";
+			i += 5;
 		}
-		i++;
-		setDirection(direction);
-
-		while (command[i] != ' ')
+		else
 		{
-			floor = floor * 10 + (command[i] - 48);
-			i++;
-		}
-		i++;
-
-		while (command[i])
-		{
-			time = time * 10 + (command[i] - 48);
-			i++;
+			direction = "up";
+			i += 3;
 		}
 	}
 	else
 	{
-		int i = 3;
-
-		while (command[i] != ' ')
-		{
-			floor = floor * 10 + (command[i] - 48);
-			i++;
-		}
-		i++;
-
-		while (command[i])
-		{
-			time = time * 10 + (command[i] - 48);
-			i++;
-		}
-		setDirection("");
+		i = 3;
 	}
+
+	while (command[i] != ' ')
+	{
+		floor = floor * 10 + (command[i] - 48);
+		i++;
+	}
+	i++;
+
+	while (command[i])
+	{
+		time = time * 10 + (command[i] - 48);
+		i++;
+	}
+	setDirection(direction);
 }
 //
 // gets data for command
@@ -79,14 +70,15 @@ void Command::setDirection(PseudoString direction)
 {
 	if (direction == "up")
 	{
-		this->direction = 1; //1 for up, -1 for down, 0 for "go" by default
+		this->direction = 1; // 1 for up, -1 for down, 0 for "go" by default
+	}
+	else if (direction == "down")
+	{
+		this->direction = -1; // 1 for up, -1 for down, 0 for "go" by default
 	}
 	else
 	{
-		if (direction == "down")
-		{
-			this->direction = -1; //1 for up, -1 for down, 0 for "go" by default
-		}
+		this->direction = 0; // default
 	}
 }
 //

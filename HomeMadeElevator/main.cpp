@@ -22,10 +22,10 @@
 
 using namespace std;
 
-int main(int argv, char** entrance)
+int main(int argc, char** argv)
 {
-	entrance[1] = "file.txt";
-	ifstream input(entrance[1]);
+	argv[1] = "file.txt";
+	ifstream input(argv[1]);
 	int N;
 	int K;
 	input >> N;
@@ -39,7 +39,7 @@ int main(int argv, char** entrance)
 	int index = 0;
 
 	input >> a;
-
+	// ÒODO: Proper reading
 	while (!input.eof())
 	{
 		commands[index] += a + " ";
@@ -68,7 +68,7 @@ int main(int argv, char** entrance)
 
 	for (int i = 0; i < K; i++)
 	{
-		readyCommands[i].readCommand(commands[i]);
+		readyCommands[i].readCommand(commands[i].getText());
 	}
 
 	Elevator elev(N);
@@ -116,4 +116,25 @@ call up 2 31
 go 1 40
 go 8 65
 go 7 70
+/*/
+
+/*/
+10 10
+call down 5 1
+call up 5 6
+go 2 7
+go 8 9
+call up 4 10
+go 2 12
+go 10 13
+call down 5 16
+go 1 18
+go 8 19
+:
+16 4 up
+21 5 up
+36 2 down
+66 8 up
+76 10 up
+121 1 down
 /*/

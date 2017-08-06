@@ -15,14 +15,12 @@
 #pragma once
 #include"PseudoString.h"
 
-using namespace std;
-
 class Command
 {
 public:
 	Command();
 
-	void readCommand(PseudoString command);
+	void readCommand(const char* command);
 
 	void setDirection(PseudoString direction);
 	void setFloor(unsigned short);
@@ -34,7 +32,7 @@ public:
 	~Command();
 private:
 	short direction;
-	unsigned short floor;
+	unsigned short floor; // rename as destination?
 	unsigned short time;
 };
 
