@@ -19,12 +19,22 @@
 #include"Elevator.h"
 #include"Queue.h"
 
-using namespace std;
-
 int main(int argc, char** argv)
 {
-	argv[1] = "file.txt";
-	ifstream input(argv[1]);
+	if (argc != 2)
+	{
+		std::cout << "Read the instructions pls" << std::endl;
+		return 1;
+	}
+
+	std::ifstream input(argv[1]);
+
+	if (!input.is_open())
+	{
+		std::cout << "I can't really open this file.." << std::endl;
+		return 2;
+	}
+
 	int N;
 	int K;
 	input >> N;
