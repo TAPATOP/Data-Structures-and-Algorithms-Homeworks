@@ -40,16 +40,14 @@ Elevator::Elevator(unsigned short floorNum)
 
 void Elevator::readCommand()
 {
-	while (
-			(
-				(
-				commandsRegister.top().getDirection() == 0 && goRegister[commandsRegister.top().getFloor()] == 0
-				) 
-				||
-				commandsRegister.top().getFloor() == 0
-			)
-		&& !commandsRegister.isEmpty()
-		)
+	//while (
+	//	(
+	//		(
+	//		commandsRegister.top().getDirection() == 0 && goRegister[commandsRegister.top().getFloor()] == 0
+	//		) 
+	//		|| 
+	//		commandsRegister.top().getFloor() == 0) && !commandsRegister.isEmpty())
+	while (commandsRegister.top().getFloor() == 0 && !commandsRegister.isEmpty() )
 		{
 			commandsRegister.dequeue(); // dequeue command if it has already been dealt with
 		}
@@ -71,7 +69,7 @@ void Elevator::readCommand()
 // tell the elevator where to head
 //
 
-void Elevator::plusOneSecond(int& time)
+void Elevator::plusOneSecond(int time)
 {
 	if (currentFloor == 0)
 	{
@@ -164,19 +162,14 @@ void Elevator::moveElevator(short direction)
 
 void Elevator::stopOnFloor(int time)
 {
-	bool flag = 0;// this exists because of empty cycles
-
 	if (goRegister[currentFloor])
 	{
 		goRegister[currentFloor] = 0;
-		flag = 1;
+		std::cout << time << " " << currentFloor << " " << outputDirection() << std::endl;
 	}
-
-	if (flag) std::cout << time << " " << currentFloor << " " << outputDirection() << std::endl;
 
 	markCommandAsExecuted();
 }
-//
 // tells the elevator what to do once he has an order to stop
 //
 
@@ -219,6 +212,6 @@ char* Elevator::outputDirection()
 
 Elevator::~Elevator()
 {
-	delete[] goRegister;
+	delete[] goRegister; // the benefit of using array queue
 }
 

@@ -24,7 +24,7 @@ public:
 	Elevator(unsigned short floorNum);
 
 	void readCommand();
-	void plusOneSecond(int& time);
+	void plusOneSecond(int time);
 	void addCommand(Command);
 	bool registerIsEmpty();
 
