@@ -17,6 +17,8 @@
 #include"Queue.h"
 #include"Command.h"
 
+#include"PseudoString.h"
+
 class Elevator
 {
 public:

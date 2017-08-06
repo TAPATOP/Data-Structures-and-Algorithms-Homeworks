@@ -13,26 +13,28 @@
 */
 
 #pragma once
-#include"PseudoString.h"
+
+#include<iostream>
 
 class Command
 {
 public:
 	Command();
 
-	void readCommand(const char* command);
-
-	void setDirection(PseudoString direction);
+	void setDirection(char* direction);
 	void setFloor(unsigned short);
 
 	unsigned short getFloor();
 	short getTime();
 	short getDirection();
 	
+	// uses char array to materialize an actual command
+	void readCommand(const char* command);
+
 	~Command();
 private:
 	short direction;
-	unsigned short floor; // rename as destination?
+	unsigned short floor; // TODO: rename as destination?
 	unsigned short time;
 };
 

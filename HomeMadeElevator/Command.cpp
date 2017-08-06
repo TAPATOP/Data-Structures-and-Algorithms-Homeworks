@@ -23,9 +23,46 @@ Command::Command()
 	time = 0;
 }
 
+
+void Command::setDirection(char* direction)
+{
+	if (direction == "up")
+	{
+		this->direction = 1; // 1 for up, -1 for down, 0 for "go" by default
+	}
+	else if (direction == "down")
+	{
+		this->direction = -1; // 1 for up, -1 for down, 0 for "go" by default
+	}
+	else
+	{
+		this->direction = 0; // default
+	}
+}
+
+//
+
+void Command::setFloor(unsigned short floor)
+{
+	this->floor = floor;
+}
+unsigned short Command::getFloor()
+{
+	return floor;
+}
+short Command::getTime()
+{
+	return time;
+}
+short Command::getDirection()
+{
+	return direction;
+}
+
 void Command::readCommand(const char* command)
 {
-	PseudoString direction = "";
+	char direction[8];
+
 	int i = 0;
 
 	if (command[0] == 'c')
@@ -34,12 +71,12 @@ void Command::readCommand(const char* command)
 
 		if (command[i] == 'd')
 		{
-			direction = "down";
+			strcpy_s(direction, "down");
 			i += 5;
 		}
 		else
 		{
-			direction = "up";
+			strcpy_s(direction, "up");
 			i += 3;
 		}
 	}
@@ -65,43 +102,6 @@ void Command::readCommand(const char* command)
 //
 // gets data for command
 //
-
-void Command::setDirection(PseudoString direction)
-{
-	if (direction == "up")
-	{
-		this->direction = 1; // 1 for up, -1 for down, 0 for "go" by default
-	}
-	else if (direction == "down")
-	{
-		this->direction = -1; // 1 for up, -1 for down, 0 for "go" by default
-	}
-	else
-	{
-		this->direction = 0; // default
-	}
-}
-//
-// uses read string to materialize an actual command
-//
-
-void Command::setFloor(unsigned short floor)
-{
-	this->floor = floor;
-}
-unsigned short Command::getFloor()
-{
-	return floor;
-}
-short Command::getTime()
-{
-	return time;
-}
-short Command::getDirection()
-{
-	return direction;
-}
-
 Command::~Command()
 {
 }
