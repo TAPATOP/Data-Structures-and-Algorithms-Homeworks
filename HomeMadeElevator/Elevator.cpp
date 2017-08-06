@@ -41,10 +41,14 @@ Elevator::Elevator(unsigned short floorNum)
 void Elevator::readCommand()
 {
 	while (
-		((
-		commandsRegister.top().getDirection() == 0 && goRegister[commandsRegister.top().getFloor()] == 0
-		) ||
-		commandsRegister.top().getFloor() == 0) && !commandsRegister.isEmpty()
+			(
+				(
+				commandsRegister.top().getDirection() == 0 && goRegister[commandsRegister.top().getFloor()] == 0
+				) 
+				||
+				commandsRegister.top().getFloor() == 0
+			)
+		&& !commandsRegister.isEmpty()
 		)
 		{
 			commandsRegister.dequeue(); // dequeue command if it has already been dealt with
@@ -75,7 +79,7 @@ void Elevator::plusOneSecond(int& time)
 		readCommand();
 	} // this breaks the elevator's virginity
 
-	if (transition == 0)// transition represents whether the elevator has finished moving between the floros;  
+	if (transition == 0)// transition represents whether the elevator has finished moving between the floors;  
 	{					// the elevator doesn really care about anything if it is between two floors though
 
 		if (currentFloor == destinationFloor) // if the destination floor has been reached
@@ -168,15 +172,15 @@ void Elevator::stopOnFloor(int time)
 		flag = 1;
 	}
 
-	if (flag) cout << time << " " << currentFloor << " " << outputDirection() << endl;
+	if (flag) std::cout << time << " " << currentFloor << " " << outputDirection() << std::endl;
 
-	nullifyCommand();
+	markCommandAsExecuted();
 }
 //
 // tells the elevator what to do once he has an order to stop
 //
 
-void Elevator::nullifyCommand()
+void Elevator::markCommandAsExecuted()
 {
 	short size1 = commandsRegister.getHead();
 	short size2 = commandsRegister.getTail();
@@ -194,7 +198,7 @@ void Elevator::nullifyCommand()
 // floor on which the elevator has stopped
 //
 
-PseudoString Elevator::outputDirection()
+char* Elevator::outputDirection()
 {
 	if (currentFloor == 1)
 	{

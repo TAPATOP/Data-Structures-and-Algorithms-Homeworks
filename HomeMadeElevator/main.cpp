@@ -15,10 +15,9 @@
 #include<iostream>
 #include<fstream>
 
-#include"Queue.h"
 #include"Command.h"
-#include"PseudoString.h"
 #include"Elevator.h"
+#include"Queue.h"
 
 using namespace std;
 
@@ -31,44 +30,40 @@ int main(int argc, char** argv)
 	input >> N;
 	input >> K;
 
-	PseudoString* commands = new PseudoString[K];
-	Command* readyCommands = new Command[K];
+	char command[50];
+	command[0] = '\0';
 
-	PseudoString a;
+	char word[40];
+	Command* readyCommands = new Command[K];
 
 	int index = 0;
 
-	input >> a;
+	input >> word;
 	// ÒODO: Proper reading
 	while (!input.eof())
 	{
-		commands[index] += a + " ";
-		if (a[0] == 'c')
+		strcat_s(word, " ");
+		strcat_s(command, word);
+
+		if (word[0] == 'c')
 		{
-			input >> a;
-			commands[index] += a + " ";
-
-			input >> a;
-			commands[index] += a + " ";
-
-			input >> a;
-			commands[index] += a;
+			input >> word;
+			strcat_s(word, " ");
+			strcat_s(command, word);
 		}
-		else
-		{
-			input >> a;
-			commands[index] += a + " ";
+		input >> word;
+		strcat_s(word, " ");
+		strcat_s(command, word);
 
-			input >> a;
-			commands[index] += a;
-		}
+		input >> word;
+
+		strcat_s(command, word);
+		
+		readyCommands[index].readCommand(command);
+
 		index++;
-		input >> a;
-	}
-
-	for (int i = 0; i < K; i++)
-	{
-		readyCommands[i].readCommand(commands[i].getText());
+		input >> word;
+		strcpy_s(command, "");
 	}
 
 	Elevator elev(N);

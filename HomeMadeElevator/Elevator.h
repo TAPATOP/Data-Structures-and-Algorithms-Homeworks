@@ -14,10 +14,8 @@
 
 #pragma once
 
-#include"Queue.h"
 #include"Command.h"
-
-#include"PseudoString.h"
+#include"Queue.h"
 
 class Elevator
 {
@@ -31,7 +29,13 @@ public:
 	bool registerIsEmpty();
 
 	~Elevator();
+private:
+	void registerInitializer();
 
+	void moveElevator(short direction);
+	void stopOnFloor(int time); // used to tell the elevator to stop on the current floor
+	void markCommandAsExecuted();
+	char* outputDirection();
 private:
 	Queue<Command> commandsRegister;// ex. 0(dir) 8(floor) 25(time)
 	unsigned short floorNum;
@@ -39,16 +43,11 @@ private:
 	// killme bool* downRegister;
 	bool* goRegister;
 	// killme bool* upRegister;
-	void registerInitializer();
 
 	unsigned short currentFloor;
 	short transition;
 	unsigned short destinationFloor;
 	short currentDirection;
 
-	void moveElevator(short direction);
-	void stopOnFloor(int time); // used to tell the elevator to stop on the current floor
-	void nullifyCommand();
-	PseudoString outputDirection();
 };
 
