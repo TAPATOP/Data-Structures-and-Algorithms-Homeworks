@@ -111,7 +111,8 @@ void Trie::insertViaFile(std::ifstream& file)
 		}
 		// entire part above is responsible for separating words from values
 
-		word[wordSize - 1] = '\0';
+		if(wordSize > 0) word[wordSize - 1] = '\0';
+
 		value[valueSize] = '\0';
 		wordSize = 0;
 		valueSize = 0;
