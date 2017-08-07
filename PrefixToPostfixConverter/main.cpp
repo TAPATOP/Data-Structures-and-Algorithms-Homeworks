@@ -12,9 +12,9 @@
 *
 */
 
+#include<iomanip>
 #include<iostream>
 #include<fstream>
-#include<iomanip>
 
 #include"PseudoString.h"
 #include"Stack.h"
@@ -31,8 +31,9 @@ PseudoString mirror(PseudoString& oldPseudoString)// should check size first
 
 	return newPseudoString;
 }
-//
 // mirrors the PseudoString
+//
+
 void wordSeparator(Stack<PseudoString>& stek, PseudoString& commands)
 {
 	int size = commands.getSize();
@@ -60,8 +61,9 @@ void wordSeparator(Stack<PseudoString>& stek, PseudoString& commands)
 		}
 	}
 }
-//
 // returns all words into the stack stek as separate elements that can be accessed by pop/top
+//
+
 bool isNumber(PseudoString& command)
 {
 	int i = 0;
@@ -80,7 +82,7 @@ bool isNumber(PseudoString& command)
 
 	for (i; i < size; i++)
 	{
-		if (command[i] == '.') floatFlag++;
+		if (command[i] == '.') floatFlag = 1;
 		if (!(command[i] >= '0' && command[i] <= '9') || floatFlag > 1)
 		{
 			return 0;
@@ -147,6 +149,7 @@ int checkSymbolOrNum(PseudoString& checkMe)
 	}
 }
 //check if the word is either an operator or a number
+//
 
 bool check_validity_of_task(PseudoString& task)
 {
@@ -178,9 +181,9 @@ bool check_validity_of_task(PseudoString& task)
 	if (numcount != symcount + 1) return 0;
 	return 1;
 }
-//
 // makes sure all elements are actual operands/ operators
 // and that the operands = operators + 1
+//
 
 bool prefixToPostfix(Stack<PseudoString>& stek, PseudoString& command)
 {
@@ -206,8 +209,8 @@ bool prefixToPostfix(Stack<PseudoString>& stek, PseudoString& command)
 	}
 	return 1;
 }
-//
 // converts the prefix command into postfix command into the only stek element
+//
 
 double useOperator(PseudoString& elem2, PseudoString& elem1, char& oper, bool& flag)
 {
@@ -325,21 +328,36 @@ bool letsConvertIt(Stack<PseudoString>& stek, PseudoString& task)
 
 int main(int argc, char** argv)
 {
+	if (argc != 3)
+	{
+		std::cout << "I need two files to work" << std::endl;
+		return 1;
+	}
+
 	Stack<PseudoString> stek;
 	std::ifstream input;
 
-	argv[1] = "commands.txt";
-	argv[2] = "operators.txt";
+	//argv[1] = "commands.txt";
+	//argv[2] = "operators.txt";
 
 	PseudoString commandsPath = argv[1];
 	PseudoString operatorsPath = argv[2];
 
+	PseudoString commands = "";
 
 	char buffer[530];
 
+	//////////////////////////
+	// FILE READING STARTS HERE
+	//////////////////////////
+
 	input.open(commandsPath.getText());
 	
-	PseudoString commands = ""; 
+	if (!input.is_open())
+	{
+		std::cout << "Error opening first file" << std::endl;
+		return 2;
+	}
 
 	while (!input.eof())
 	{
@@ -352,6 +370,13 @@ int main(int argc, char** argv)
 	input.close();
 
 	input.open(operatorsPath.getText());
+
+	if (!input.is_open())
+	{
+		std::cout << "Error opening second file" << std::endl;
+		return 3;
+	}
+
 	PseudoString operators = "";
 
 	while (!input.eof())
@@ -362,18 +387,21 @@ int main(int argc, char** argv)
 		buffer[0] = '\0';
 	}
 
-	//
-	// files are read above this, thus giving the task/ command and operators
-	//
+	input.close();
+
+	//////////////////////////
+	// CONVERTS PREFIX TO POSTFIX
+	//////////////////////////
 
 	if (!letsConvertIt(stek, commands))
 	{
 		std::cout << "Error" << std::endl;
-		return 1;
+		return 4;
 	}
-    //
-	// PseudoString should be converted by now
-	//
+
+	//////////////////////////
+	// CALCULATES POSTFIX
+	//////////////////////////
 
 	PseudoString postfix = stek.topNpop();
 
@@ -386,7 +414,7 @@ int main(int argc, char** argv)
 	else
 	{
 		std::cout << "Error" << std::endl;
-		return 2;
+		return 5;
 	}
 	return 0;
 }
