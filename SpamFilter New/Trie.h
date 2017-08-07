@@ -31,18 +31,19 @@ public:
 	Trie();
 
 	void insert(char* word, int value);// make sure whatever is passed here is a legit word/phrase composited of spaces and small Latin letters only
-	void insertViaFile(std::ifstream&);
+	void insert_via_file(std::ifstream&);
 
-	int searchInFile(std::ifstream&);
+	int search_in_file(std::ifstream&);
 
 	~Trie();
 private:
-	short giveLetterToHead(char letter, int index);// the reason this is of type short is to return error codes which is more than what bool can support
-	void statusHandler(short statusCode);
-	void deactivateHeads();
-	bool areLeftHeadsWorking(int index);
-	int valueCollector(unsigned int index);
+	void pass_letter_to_head(int headIndex, char letter);
+	void activate_head();
+	void deactivate_head(int index);
 
+	short transform_letter_to_index(char letter);
+
+	void copy_head(int index1, int index2);
 private:
 	struct Node
 	{
@@ -57,15 +58,21 @@ private:
 			}
 		}
 	};
-	Node rootNode;
+	Node* rootNode;
 
-	Node** headNodes;			   
-	int* lastValues;			   
-	bool* isWorking;				   
-	bool* hasReachedAnEnd;		   
-	int indexOfLastActivatedHead;  
-	bool* valueCollected;
+	struct head
+	{
+		Node* nodeOfHead;
+		int lastValue = 0;
+		bool isWorking = 0;
+		bool hasRecognizedAWord = 0;
+	};
+
+	static const int headsLimit = 10;
+	head heads[headsLimit];
+	int numberOfWorkingHeads;
 };
+
 char decapitalize(char);// used to make sure all letters are small before they are checked for in the trie
 bool isWhitespace(char);// delimeters are whatever ' ' can be replaced by and still match a dictionary word
 bool isWordSeparator(char);// whatever means a word should be counted. no idea which are those is whatsoever

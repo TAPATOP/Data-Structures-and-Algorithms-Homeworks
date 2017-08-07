@@ -13,32 +13,19 @@
 */
 #include "Trie.h"
 
-const int headNumber = 100;
+const short letterError = 69;
 
 Trie::Trie()
 {
-	headNodes = new Node*[headNumber];
-	lastValues = new int[headNumber];
-	isWorking = new bool[headNumber];
-	hasReachedAnEnd = new bool[headNumber];
-	valueCollected = new bool[headNumber];
-		
-	for (int i = 0; i < headNumber; i++)
-	{
-		headNodes[i] = &rootNode;
-		lastValues[i] = 0;
-		isWorking[i] = 0;
-		hasReachedAnEnd[i] = 0;
-		valueCollected[i] = 1;
-	}
-
-	isWorking[0] = 1;
-	indexOfLastActivatedHead = 0;
+	rootNode = new Node;
+	numberOfWorkingHeads = 0;
 }
 
+// adds words to the dictionary
+// whatever is passed for "entry" must be a legit word/phrase composited of spaces and small Latin letters only
 void Trie::insert(char* entry, int value)
 {
-	Node* currentNode = &rootNode;
+	Node* currentNode = rootNode;
 	unsigned short index;
 
 	for (int i = 0; entry[i]; i++)
@@ -66,13 +53,11 @@ void Trie::insert(char* entry, int value)
 	currentNode->endOfWord = true;
 	currentNode->value = value;
 }
-//
-// whatever is passed for "entry" must be a legit word/phrase composited of spaces and small Latin letters only
-//
 
-void Trie::insertViaFile(std::ifstream& file)
+//	enriches the vocabulary using a >>> properly formatted <<< file
+void Trie::insert_via_file(std::ifstream& file)
 {
-	unsigned const int maxSizeOfLine = 5000;
+	unsigned const int maxSizeOfLine = 1024;
 	// reason for this const is to easily make changes in case they are needed, 
 	// hopefully we won't need more than 5000 character long dictionary entries
 
@@ -130,226 +115,193 @@ void Trie::insertViaFile(std::ifstream& file)
 		file.clear();
 	}
 }
-//
-//	enriches the vocabulary using a properly formatted file
-// 	does not work for phrases whose words are separated by more than one whitespace character
-//
 
-int Trie::searchInFile(std::ifstream& file)
+// searches for vocabulary words into the files
+int Trie::search_in_file(std::ifstream& file)
 {
-	unsigned const int maxLineSize = 100000;
-	bool symbolTracker = 0; // 0 for symbol, 1 for letter
-	unsigned int wordCount = 0;
-	char* newInput = new char[maxLineSize];
-	char lastLetterOfInput = ' ';
-	// if letter is indeed a letter, this becomes 1, if not, becomes 0
-	// for each change a word is counted
-	
-	// 0 -> gate successfully passed
-	// -1 -> whitespace gate passed, searching for phrase -> activate new head; GET VALUE
-	// 1 -> letter gate not passed -> return last value and continue normal search with other heads [HEAD STOPS]
-	// 2 -> whitespace gate not passed -> return last value and continue normal search [HEAD STOPS]
-	// -2 -> whitespace not passed but node is END( e.g. complete match) -> get value and destroy all heads if all left ones are disabled
-	// 3(1) -> given symbol is not a letter/whitespace -> end word, return value if existant [HEAD STOPS]
-	short status;
-	while (true)
+	const int readSize = 1024;
+	char text[readSize + 1];
+	int textIndex = 0;
+
+	activate_head();
+
+	while (!file.eof())
 	{
+		// READING PART //
+		text[0] = '\0';
+		textIndex = 0;
 
-		file.getline(newInput, maxLineSize - 1);
+		file.read(text, readSize);
 
-		for (unsigned int i = 0; newInput[i]; i++)
+		text[file.gcount()] = '\0';
+
+		// HEAD WORK PART //
+
+		// iterates all the letters
+		while (text[textIndex] != '\0') 
 		{
-			if (newInput[i] < 'a' || newInput[i] > 'z')
+			// gives the current letter to all heads
+			for (int i = 0; i < numberOfWorkingHeads; i++) 
 			{
-				if (symbolTracker == 1)
+				// no reason to pass a letter to a non- working head
+				if (heads[i].isWorking)
 				{
-					symbolTracker = 0;
-					wordCount++;
-				}
-			}
-			else
-			{
-				symbolTracker = 1;
-			}
-
-			for (int j = 0; j <= indexOfLastActivatedHead; j++)
-			{
-				if (isWorking[j])
-				{
-					status = giveLetterToHead(decapitalize(newInput[i]), j);
+					if (isWhitespace(text[textIndex]))
+					{
+						pass_letter_to_head(i, ' ');
+					}
+					else
+					{
+						pass_letter_to_head(i, text[textIndex]);
+					}
 				}
 			}
 
-			if (isWhitespace(newInput[i]))
+			if (isWhitespace(text[textIndex]))
 			{
-				isWorking[++indexOfLastActivatedHead] = 1;
-				
+				activate_head();
 			}
-			
-			for (unsigned int j = 0; j <= indexOfLastActivatedHead; j++)
-			{
-				if (isWorking[j])
-				{
-					giveLetterToHead('5', j);
-				}
-			}
+
+			textIndex++;
 		}
-		////cout << wordCount << endl; // almost working
-		////cout << "AND THE LAST LETTER IS:" << lastLetterOfInput << endl;
-		if (file.eof()) break;
-		file.clear();
+
+		for (int i = 0; i < numberOfWorkingHeads; i++)
+		{
+			pass_letter_to_head(i, ' ');
+		}
 	}
-	//giveLetterToHead(' ');
-	////cout << "FINAALLL:" << lastValue << endl;
-	////cout << "number of words is:" << wordCount << endl;
 	return 0;
 }
 
 Trie::~Trie()
 {
+
 }
-// if heads to the left aren't working and current head has stopped at an END, return the value
-// if ^^^^ AND current head is at end of phrase AND next letter is a separator, KILL EVERYONE
 
-// 0 -> gate successfully passed
-// -1 -> whitespace gate passed, searching for phrase -(dealt with on the outside)> activate new head
-// 1 -> letter gate not passed -()> return last value and continue normal search with other heads [HEAD STOPS] { should skip word somehow }
-// 2 -> whitespace gate not passed -()> return last value and continue normal search [HEAD STOPS]
-// -2 -> whitespace not passed but node is END( e.g. complete match) -> get value and destroy all heads if all left ones are disabled
-// 3(1) -> given symbol is not a letter/whitespace -> end word, return value if existant [HEAD STOPS]
-short Trie::giveLetterToHead(char letter, int i)
+// passes letter to heads[headIndex] and kills heads based on what happens next
+void Trie::pass_letter_to_head(int headIndex, char letter)
 {
-	if (notLetterNorWhitespace(letter))// anything that (isn't a number && is not a delimeter) is skipped
+	// i'd rather copy an address instead of the object itself
+	head* currentHead = &heads[headIndex]; 
+
+	// the index used to address the letters in Nodes
+	short letterIndexInNode = transform_letter_to_index(letter); 
+
+	if (letter == ' ')
 	{
-		if (headNodes[i]->endOfWord)
+		// if the current Node is an ending; we do this check only now cause letter is a delimeter
+		if (currentHead->nodeOfHead->endOfWord)
 		{
-			lastValues[i] = headNodes[i]->value;// if it's a legit thing to do, this gets the value of an eventual word in the current node
-			hasReachedAnEnd[i] = 1;
-			isWorking[i] = 0;
-		}
-		headNodes[i] = &rootNode;// go back to start of tree, since current letter can not be within the dictionary anyway, so no use searching down the current branch
+			// sets value according to dictionary entry
+			currentHead->lastValue = currentHead->nodeOfHead->value;
 
-		//cout << "value saved: " << lastValues[i] << endl;
-		valueCollected[i] = 0;
-
-		return 1;// error code without flushing nor address change (used to be 3)
-	}
-	//
-	// handled non- (letter/ whitespace)
-	//
-
-
-
-	short index;
-	if (isWhitespace(letter))
-	{
-		index = 0;
-		if (headNodes[i]->endOfWord == 1)
-		{
-			lastValues[i] = headNodes[i]->value;
-			hasReachedAnEnd[i] = 1;
-			valueCollected[0] = 0;
-			////cout << "Last value changed!" << endl;//maybe here
-		}
-	}
-	else
-	{
-		if (letter >= 97 && letter <= 122)//might want to delete the if
-		{
-			index = letter - 96;
-		}
-	}
-	//
-	// selected proper index to address the node array with
-	//
-
-
-
-	if (headNodes[i]->next[index])// if there is such a symbol in the node
-	{
-		headNodes[i] = headNodes[i]->next[index]; // move currentNode and wait for next letter
-
-		if (isWhitespace(letter))
-		{
-			//cout << "value saved: " << lastValues[i] << endl;
-			valueCollected[i] = 0;
-			return -1;
-		}
-		//cout << letter << endl;
-		return 0; // no error, word/phrase is matched
-	}
-	else
-	{
-		headNodes[i] = &rootNode;
-		isWorking[i] = 0;
-
-		if (isWhitespace(letter))
-		{
-			if (hasReachedAnEnd[i])
+			// has recognized a word
+			currentHead->hasRecognizedAWord = 1; 
+			
+			// deactivates all heads to the right because this head has already found a match of all the 
+			// current letters
+			for (int i = headIndex + 1; i < numberOfWorkingHeads; i++)
 			{
-				if (areLeftHeadsWorking(i))
-				{
-					//cout << "value saved: " << lastValues[i] << endl;
-					valueCollected[i] = 0;
-					return -2;
-				}
-				else
-				{
-					valueCollector(i);
-					deactivateHeads();
-					std::cout << lastValues[i] << std::endl; // case -2; part responsible for giving value
-				}
+				deactivate_head(i);
 			}
-			//cout << "value saved: " << lastValues[i] << endl;
-			valueCollected[i] = 0;
-			return 2;// word ends and has no phrase
+
+			// sets the number of working heads
+			numberOfWorkingHeads = headIndex + 1;
 		}
-		else
+	}
+
+	// if there is an entry of the current sequence of letters
+	if (currentHead->nodeOfHead->next[letterIndexInNode] != nullptr)
+	{
+		// move to the next node
+		currentHead->nodeOfHead = currentHead->nodeOfHead->next[letterIndexInNode];
+	}
+	else
+	{
+		// eject the value the head has stored so far if it has recognized a word
+		if (currentHead->hasRecognizedAWord && headIndex == 0)
 		{
-			////cout << "value saved: " << lastValues[i] << endl; // migth be unneeded, bro
-			//valueCollected[i] = 0;
-			return 1;// word doesn't match the given letter; should save the value somehow
+			std::cout << currentHead->lastValue << std::endl;
+
+
+			// move all of the nodes after the current one to the left by copying them one. by. one. It's retarded
+			// but it will do the job, for now at least
+			for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
+			{
+				copy_head(i, i + 1);
+			}
+
+			// reduce the number of working heads since the current one got overwritten and the last one
+			// can be found twice in the heads array now
+			numberOfWorkingHeads--;
+
+			// deactivates the last head, which has a copy right before it
+			deactivate_head(numberOfWorkingHeads);
+
+			//while (!(heads[headIndex].isWorking) && (numberOfWorkingHeads > headIndex))
+			//{
+			//	if (currentHead->hasRecognizedAWord)
+			//	{
+			//		std::cout << currentHead->lastValue << std::endl;
+			//	}
+			//
+			//	for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
+			//	{
+			//		copy_head(i, i + 1);
+			//	}
+			//
+			//	numberOfWorkingHeads--;
+			//	deactivate_head(numberOfWorkingHeads);
+			//}
+
+			// if there is an active head on( or after) the location of the recently overwritten head
+			if (numberOfWorkingHeads > headIndex)
+			{
+				// pass the command to the head on the current place, because search_in_file() will skip it
+				pass_letter_to_head(headIndex, letter);
+			}
 		}
 	}
 }
 
-void Trie::statusHandler(short statusCode)
+// prepares another head for work
+void Trie::activate_head()
 {
+	head* currentHead = &heads[numberOfWorkingHeads];
 
+	currentHead->isWorking = 1;
+	currentHead->nodeOfHead = rootNode;
+	currentHead->lastValue = 0;
+	currentHead->hasRecognizedAWord = 0;
+
+	numberOfWorkingHeads++;
 }
 
-void Trie::deactivateHeads()
+// stops the head from working
+void Trie::deactivate_head(int index)
 {
-	for (int i = 0; i <= indexOfLastActivatedHead; i++)
-	{
-		headNodes[i] = &rootNode;
-		lastValues[i] = 0;
-		isWorking[i] = 0;
-		hasReachedAnEnd[i] = 0;
-		valueCollected[i] = 1;
-	}
-	indexOfLastActivatedHead = -1;
+	heads[index].isWorking = 0;
 }
 
-bool Trie::areLeftHeadsWorking(int index)
+// [a-z] and ' ' only; letterError otherwise
+short Trie::transform_letter_to_index(char letter)
 {
-	for (int i = index; i >= 0; i--)
-	{
-		if (isWorking[i]) return 1;
-	}
-	return 0;
+	if (letter == ' ') return 0;
+	if (letter >= 'a' && letter <= 'z') return letter - 96;
+
+	return letterError;
 }
 
-int Trie::valueCollector(unsigned int index)
+// copies heads[index2] to heads[index1]
+void Trie::copy_head(int index1, int index2)
 {
-	for (int i = 0; i < index; i++)
-	{
-		if (valueCollected[i] == 0)
-		{
-			std::cout << lastValues[i] << std::endl;
-		}
-	}
-	return 0;
+	head* head1 = &heads[index1];
+	head* head2 = &heads[index2];
+
+	head1->isWorking = head2->isWorking;
+	head1->nodeOfHead = head2->nodeOfHead;
+	head1->lastValue = head2->lastValue;
+	head1->hasRecognizedAWord = head2->hasRecognizedAWord;
 }
 
 char decapitalize(char letter)
