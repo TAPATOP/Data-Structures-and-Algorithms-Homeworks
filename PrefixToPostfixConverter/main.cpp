@@ -17,10 +17,7 @@
 #include<iomanip>
 
 #include"PseudoString.h"
-
 #include"Stack.h"
-
-using namespace std;
 
 PseudoString mirror(PseudoString& oldPseudoString)// should check size first
 {
@@ -230,7 +227,7 @@ double useOperator(PseudoString& elem2, PseudoString& elem1, char& oper, bool& f
 		flag = 1;
 		return 0;
 	}
-
+	return 0;
 }
 char matchOperator(char& oper, PseudoString& operatorList)
 {
@@ -326,43 +323,43 @@ bool letsConvertIt(Stack<PseudoString>& stek, PseudoString& task)
 }
 // converts the prefix command into a postfix command
 
-int main(int argv, char** entrance)
+int main(int argc, char** argv)
 {
 	Stack<PseudoString> stek;
-	ifstream input;
+	std::ifstream input;
 
-	PseudoString commandsPath = entrance[1];
-	PseudoString operatorsPath = entrance[2];
+	argv[1] = "commands.txt";
+	argv[2] = "operators.txt";
 
-	//PseudoString commandsPath = "commands.txt";
-	//PseudoString operatorsPath = "operators.txt";
+	PseudoString commandsPath = argv[1];
+	PseudoString operatorsPath = argv[2];
 
-	char a[500];
+
+	char buffer[530];
 
 	input.open(commandsPath.getText());
 	
 	PseudoString commands = ""; 
 
-	input >> a;
-	commands += a;
 	while (!input.eof())
 	{
-		commands += " "; 
-		input >> a;
-		commands += a;
+		input.read(buffer, 512);
+		buffer[input.gcount()] = '\0';
+		commands += buffer;
+		buffer[0] = '\0';
 	}
+
 	input.close();
 
 	input.open(operatorsPath.getText());
 	PseudoString operators = "";
 
-	input >> a;
-	operators += a;
 	while (!input.eof())
 	{
-		operators += " ";
-		input >> a;
-		operators += a;
+		input.read(buffer, 512);
+		buffer[input.gcount()] = '\0';
+		operators += buffer;
+		buffer[0] = '\0';
 	}
 
 	//
@@ -371,8 +368,8 @@ int main(int argv, char** entrance)
 
 	if (!letsConvertIt(stek, commands))
 	{
-		cout << "Error" << endl;
-		return 0;
+		std::cout << "Error" << std::endl;
+		return 1;
 	}
     //
 	// PseudoString should be converted by now
@@ -380,14 +377,16 @@ int main(int argv, char** entrance)
 
 	PseudoString postfix = stek.topNpop();
 
-	Stack<PseudoString> separated;// ??
-
 	if (letsCalculateThePostfix(postfix, operators))
 	{
-		cout << postfix << endl;
-		cout << fixed;
-		cout << setprecision(5) << pstod(operators) << endl; // operators have actually been overwritten with the result
+		std::cout << postfix << std::endl;
+		std::cout << std::fixed;
+		std::cout << std::setprecision(5) << pstod(operators) << std::endl; // operators have actually been overwritten with the result
 	}
-	else cout << "Error" << endl;
+	else
+	{
+		std::cout << "Error" << std::endl;
+		return 2;
+	}
 	return 0;
 }

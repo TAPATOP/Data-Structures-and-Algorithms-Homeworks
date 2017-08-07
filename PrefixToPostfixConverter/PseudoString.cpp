@@ -239,7 +239,7 @@ PseudoString& PseudoString::operator=(char* const & Other)
 // = operator for char*
 //
 
-ostream& operator<<(ostream &out, PseudoString &me)
+std::ostream& operator<<(std::ostream &out, PseudoString &me)
 {
 	out << me.getText();
 	return out;
@@ -248,7 +248,7 @@ ostream& operator<<(ostream &out, PseudoString &me)
 // << operator
 //
 
-istream& operator>>(istream& input, PseudoString& me)
+std::istream& operator>>(std::istream& input, PseudoString& me)
 {
 	char* a = new char [500];
 	input >> a;
@@ -377,7 +377,7 @@ double pstod(PseudoString& word)
 	return flag * (actualNumber + decimalPart);
 }
 
-PseudoString to_PseudoString(double& const d)
+PseudoString to_PseudoString(double const d)
 {
 	char c[20];
 	sprintf_s(c, "%lf", d);

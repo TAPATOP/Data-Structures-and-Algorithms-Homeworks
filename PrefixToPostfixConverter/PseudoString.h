@@ -1,8 +1,6 @@
 #pragma once
 #include<iostream>
 
-using namespace std;
-
 class PseudoString
 {
 public:
@@ -29,8 +27,8 @@ public:
 	PseudoString& operator=(char const & Other);
 	PseudoString& operator=(char* const & Other);
 
-	friend ostream& operator<<(ostream& output, PseudoString& me);
-	friend istream& operator>>(istream& intput, PseudoString& me);
+	friend std::ostream& operator<<(std::ostream& output, PseudoString& me);
+	friend std::istream& operator>>(std::istream& intput, PseudoString& me);
 
 	char operator [](int index) const;
 	char & operator [](int index); 
@@ -51,5 +49,5 @@ private:
 };
 
 double pstod(PseudoString&);
-PseudoString to_PseudoString(double& const number);
+PseudoString to_PseudoString(double const number);
 
