@@ -16,15 +16,14 @@
 
 #include "Trie.h"
 
-//tellg, seekg
 int main(int argc, char** argv)
 {
 	//argc = 3;
 	//
-	//argv[1] = "exVocabulary.txt";
-	//argv[2] = "exFile.txt";
+	//argv[1] = "vocabulary2.txt";
+	//argv[2] = "file2.txt";
 	//argv[3] = "file1.txt";
-	std::cout << "a ";
+
 	Trie alpha;
 
 	std::ifstream fileToRead(argv[1]);

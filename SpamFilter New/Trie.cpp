@@ -57,9 +57,9 @@ void Trie::insert(char* entry, int value)
 //	enriches the vocabulary using a >>> properly formatted <<< file
 void Trie::insert_via_file(std::ifstream& file)
 {
-	unsigned const int maxSizeOfLine = 1024;
 	// reason for this const is to easily make changes in case they are needed, 
-	// hopefully we won't need more than 5000 character long dictionary entries
+	// hopefully we won't need more than 1024 character long dictionary entries
+	unsigned const int maxSizeOfLine = 1024;
 
 	char input[maxSizeOfLine];
 	char word[maxSizeOfLine];
@@ -153,9 +153,9 @@ float Trie::search_in_file(std::ifstream& file)
 		while (text[textIndex] != '\0') 
 		{
 			// responsible for counting words: if a delimeter is followed by a letter => it's a word
-			char symbol = decapitalize(text[textIndex]);
+			char currentSymbol = decapitalize(text[textIndex]);
 
-			if ( symbol == 0)
+			if ( currentSymbol == 0)
 			{
 				previousSymbolWasDelimeter = 1;
 			}
@@ -180,34 +180,27 @@ float Trie::search_in_file(std::ifstream& file)
 					}
 					else
 					{
-						char c = decapitalize(text[textIndex]);
-
-						pass_letter_to_head(i, c);
+						pass_letter_to_head(i, decapitalize(text[textIndex]));
 					}
 				}
 			}
 
-			if (isWhitespace(text[textIndex]) || decapitalize(text[textIndex]) == 0)
+			if (currentSymbol == 0)
 			{
 				activate_head();
 			}
 
 			textIndex++;
 		}
-
-		// passes a space in order for the heads to record if they've reached an entry
-		//for (int i = 0; i < numberOfWorkingHeads; i++)
-		//{
-		//	pass_letter_to_head(i, ' ');
-		//}
-
-		for (int i = 0; i < numberOfWorkingHeads; i++)
-		{
-			// passes a letter that is sure to be invalid so the algorithm makes
-			// the nodes with values to deactivate and send their result back
-			pass_letter_to_head(i, 0);
-		}
 	}
+
+	for (int i = 0; i < numberOfWorkingHeads; i++)
+	{
+		// passes a letter that is sure to be invalid so the algorithm makes
+		// the nodes with values to deactivate and send their result back
+		pass_letter_to_head(i, 0);
+	}
+
 	if (textWordCount == 0) return 0;
 
 	return  collectedValue / (float)textWordCount;
