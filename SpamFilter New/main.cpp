@@ -19,12 +19,12 @@
 //tellg, seekg
 int main(int argc, char** argv)
 {
-	argc = 3;
-
-	argv[1] = "vocabulary3.txt";
-	argv[2] = "file3.txt";
-	argv[3] = "file1.txt";
-
+	//argc = 3;
+	//
+	//argv[1] = "exVocabulary.txt";
+	//argv[2] = "exFile.txt";
+	//argv[3] = "file1.txt";
+	std::cout << "a ";
 	Trie alpha;
 
 	std::ifstream fileToRead(argv[1]);
@@ -38,11 +38,11 @@ int main(int argc, char** argv)
 		if (!fileToRead.is_open())
 		{
 			std::cout << "There is something wrong with " << argv[i] << std::endl;
+			continue;
 		}
-		std::cout << argv[i] << std::endl;
-		alpha.search_in_file(fileToRead);
+		std::cout << argv[i] << " ";
+		std::cout << alpha.search_in_file(fileToRead) << std::endl;
 		fileToRead.close();
-		std::cout << "-----------" << std::endl;
 	}
 	return 0;
 }

@@ -117,11 +117,23 @@ void Trie::insert_via_file(std::ifstream& file)
 }
 
 // searches for vocabulary words into the files
-int Trie::search_in_file(std::ifstream& file)
+float Trie::search_in_file(std::ifstream& file)
 {
+	collectedValue = 0;
+
 	const int readSize = 1024;
 	char text[readSize + 1];
 	int textIndex = 0;
+
+	unsigned int textWordCount = 0;
+	bool previousSymbolWasDelimeter = 0;
+	char firstLetterOfText = file.get();
+	file.seekg(0, std::ios::beg);
+
+	if (decapitalize(firstLetterOfText))
+	{
+		textWordCount++;
+	}
 
 	activate_head();
 
@@ -140,6 +152,22 @@ int Trie::search_in_file(std::ifstream& file)
 		// iterates all the letters
 		while (text[textIndex] != '\0') 
 		{
+			// responsible for counting words: if a delimeter is followed by a letter => it's a word
+			char symbol = decapitalize(text[textIndex]);
+
+			if ( symbol == 0)
+			{
+				previousSymbolWasDelimeter = 1;
+			}
+			else
+			{
+				if (previousSymbolWasDelimeter)
+				{
+					previousSymbolWasDelimeter = 0;
+					textWordCount++;
+				}
+			}
+
 			// gives the current letter to all heads
 			for (int i = 0; i < numberOfWorkingHeads; i++) 
 			{
@@ -178,15 +206,11 @@ int Trie::search_in_file(std::ifstream& file)
 			// passes a letter that is sure to be invalid so the algorithm makes
 			// the nodes with values to deactivate and send their result back
 			pass_letter_to_head(i, 0);
-
-			if (heads[i].hasRecognizedAWord)
-			{
-				std::cout << heads[i].lastValue << std::endl;
-				break;
-			}
 		}
 	}
-	return 0;
+	if (textWordCount == 0) return 0;
+
+	return  collectedValue / (float)textWordCount;
 }
 
 Trie::~Trie()
@@ -241,8 +265,8 @@ void Trie::pass_letter_to_head(int headIndex, char letter)
 		// eject the value the head has stored so far if it has recognized a word and is first in the array
 		if (currentHead->hasRecognizedAWord && headIndex == 0)
 		{
-			// placeholder for actions with word values
-			std::cout << currentHead->lastValue << std::endl;
+			// collects the value
+			collectedValue += currentHead->lastValue;
 
 			// plays the role of "value is collected" -> 0 = "is collected" and we can now destroy the head
 			currentHead->hasRecognizedAWord = 0;
@@ -270,22 +294,6 @@ void Trie::pass_letter_to_head(int headIndex, char letter)
 				pass_letter_to_head(headIndex, letter);
 			}
 		}
-		//while (!(heads[headIndex].isWorking) && (numberOfWorkingHeads > headIndex))
-		//{
-		//	if (currentHead->hasRecognizedAWord)
-		//	{
-		//		std::cout << currentHead->lastValue << std::endl;
-		//	}
-		//
-		//	for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
-		//	{
-		//		copy_head(i, i + 1);
-		//	}
-		//
-		//	numberOfWorkingHeads--;
-		//	deactivate_head(numberOfWorkingHeads);
-		//}
-
 	}
 }
 
@@ -330,6 +338,7 @@ void Trie::copy_head(int index1, int index2)
 	head1->hasRecognizedAWord = head2->hasRecognizedAWord;
 }
 
+// decapitalizes letter if needed; returns 0 if it letter is not a letter
 char decapitalize(char letter)
 {
 	if (letter >= 'A' && letter <= 'Z')
@@ -345,6 +354,7 @@ char decapitalize(char letter)
 	return 0; // error
 }
 
+// returns true if letter is ' ', newline or tab
 bool isWhitespace(char letter)
 {
 	if (letter == ' ' || letter == '\n' || letter == '\t') return 1;
@@ -353,23 +363,6 @@ bool isWhitespace(char letter)
 //
 // delimeters are whatever ' ' can be replaced by and still match a dictionary word
 //
-bool isWordSeparator(char letter)
-{
-	if (!(letter>= 'a' && letter <= 'z'))
-	{
-		return 1;
-	}
-	return 0;
-}
-
-bool notLetterNorWhitespace(char letter)
-{
-	if ((letter < 97 || letter > 122) && !isWhitespace(letter))
-	{
-		return 1;
-	}
-	return 0;
-}
 
 int charArrToInt(char* word)//please dont try anything different than numbers here
 {
