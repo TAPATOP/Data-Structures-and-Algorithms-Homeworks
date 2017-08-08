@@ -152,12 +152,14 @@ int Trie::search_in_file(std::ifstream& file)
 					}
 					else
 					{
-						pass_letter_to_head(i, text[textIndex]);
+						char c = decapitalize(text[textIndex]);
+
+						pass_letter_to_head(i, c);
 					}
 				}
 			}
 
-			if (isWhitespace(text[textIndex]))
+			if (isWhitespace(text[textIndex]) || decapitalize(text[textIndex]) == 0)
 			{
 				activate_head();
 			}
@@ -165,9 +167,23 @@ int Trie::search_in_file(std::ifstream& file)
 			textIndex++;
 		}
 
+		// passes a space in order for the heads to record if they've reached an entry
+		//for (int i = 0; i < numberOfWorkingHeads; i++)
+		//{
+		//	pass_letter_to_head(i, ' ');
+		//}
+
 		for (int i = 0; i < numberOfWorkingHeads; i++)
 		{
-			pass_letter_to_head(i, ' ');
+			// passes a letter that is sure to be invalid so the algorithm makes
+			// the nodes with values to deactivate and send their result back
+			pass_letter_to_head(i, 0);
+
+			if (heads[i].hasRecognizedAWord)
+			{
+				std::cout << heads[i].lastValue << std::endl;
+				break;
+			}
 		}
 	}
 	return 0;
@@ -187,7 +203,7 @@ void Trie::pass_letter_to_head(int headIndex, char letter)
 	// the index used to address the letters in Nodes
 	short letterIndexInNode = transform_letter_to_index(letter); 
 
-	if (letter == ' ')
+	if (currentHead->isWorking && (letter == ' ' || letter == 0) )
 	{
 		// if the current Node is an ending; we do this check only now cause letter is a delimeter
 		if (currentHead->nodeOfHead->endOfWord)
@@ -210,49 +226,42 @@ void Trie::pass_letter_to_head(int headIndex, char letter)
 		}
 	}
 
-	// if there is an entry of the current sequence of letters
-	if (currentHead->nodeOfHead->next[letterIndexInNode] != nullptr)
+	// if there is an entry of the current sequence of letters and the head is still working
+	if (currentHead->nodeOfHead->next[letterIndexInNode] != nullptr && currentHead->isWorking && letter != 0)
 	{
 		// move to the next node
 		currentHead->nodeOfHead = currentHead->nodeOfHead->next[letterIndexInNode];
 	}
+	// events that occur when the head stops working
 	else
 	{
-		// eject the value the head has stored so far if it has recognized a word
+		// stop the head from working since there is no valid entry of the letter
+		currentHead->isWorking = 0;
+
+		// eject the value the head has stored so far if it has recognized a word and is first in the array
 		if (currentHead->hasRecognizedAWord && headIndex == 0)
 		{
+			// placeholder for actions with word values
 			std::cout << currentHead->lastValue << std::endl;
 
+			// plays the role of "value is collected" -> 0 = "is collected" and we can now destroy the head
+			currentHead->hasRecognizedAWord = 0;
+		}
 
+		if (!currentHead->hasRecognizedAWord)
+		{
 			// move all of the nodes after the current one to the left by copying them one. by. one. It's retarded
 			// but it will do the job, for now at least
 			for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
 			{
 				copy_head(i, i + 1);
 			}
-
 			// reduce the number of working heads since the current one got overwritten and the last one
 			// can be found twice in the heads array now
 			numberOfWorkingHeads--;
 
 			// deactivates the last head, which has a copy right before it
 			deactivate_head(numberOfWorkingHeads);
-
-			//while (!(heads[headIndex].isWorking) && (numberOfWorkingHeads > headIndex))
-			//{
-			//	if (currentHead->hasRecognizedAWord)
-			//	{
-			//		std::cout << currentHead->lastValue << std::endl;
-			//	}
-			//
-			//	for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
-			//	{
-			//		copy_head(i, i + 1);
-			//	}
-			//
-			//	numberOfWorkingHeads--;
-			//	deactivate_head(numberOfWorkingHeads);
-			//}
 
 			// if there is an active head on( or after) the location of the recently overwritten head
 			if (numberOfWorkingHeads > headIndex)
@@ -261,6 +270,22 @@ void Trie::pass_letter_to_head(int headIndex, char letter)
 				pass_letter_to_head(headIndex, letter);
 			}
 		}
+		//while (!(heads[headIndex].isWorking) && (numberOfWorkingHeads > headIndex))
+		//{
+		//	if (currentHead->hasRecognizedAWord)
+		//	{
+		//		std::cout << currentHead->lastValue << std::endl;
+		//	}
+		//
+		//	for (int i = headIndex; i < numberOfWorkingHeads - 1; i++)
+		//	{
+		//		copy_head(i, i + 1);
+		//	}
+		//
+		//	numberOfWorkingHeads--;
+		//	deactivate_head(numberOfWorkingHeads);
+		//}
+
 	}
 }
 
@@ -281,6 +306,7 @@ void Trie::activate_head()
 void Trie::deactivate_head(int index)
 {
 	heads[index].isWorking = 0;
+	heads[index].hasRecognizedAWord = 0;
 }
 
 // [a-z] and ' ' only; letterError otherwise
@@ -306,11 +332,17 @@ void Trie::copy_head(int index1, int index2)
 
 char decapitalize(char letter)
 {
-	if (letter >= 65 && letter <= 90)
+	if (letter >= 'A' && letter <= 'Z')
 	{
-		letter = letter + 32;
+		return letter + 32;
 	}
-	return letter;
+
+	if (letter >= 'a' && letter <= 'z')
+	{
+		return letter;
+	}
+
+	return 0; // error
 }
 
 bool isWhitespace(char letter)

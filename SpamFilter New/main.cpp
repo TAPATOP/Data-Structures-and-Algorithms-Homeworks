@@ -21,8 +21,8 @@ int main(int argc, char** argv)
 {
 	argc = 3;
 
-	argv[1] = "vocabulary1.txt";
-	argv[2] = "file1.txt";
+	argv[1] = "vocabulary3.txt";
+	argv[2] = "file3.txt";
 	argv[3] = "file1.txt";
 
 	Trie alpha;
