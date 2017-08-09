@@ -18,6 +18,11 @@
 
 int main(int argc, char** argv)
 {
+	if (argc <= 1)
+	{
+		std::cout << "Consider giving me files to work with." << std::endl;
+		return 1;
+	}
 	//argc = 3;
 	//
 	//argv[1] = "vocabulary2.txt";
@@ -28,6 +33,11 @@ int main(int argc, char** argv)
 
 	std::ifstream fileToRead(argv[1]);
 
+	if (!fileToRead.is_open())
+	{
+		std::cout << "Couldnt open vocabulary.." << std::endl;
+		return 2;
+	}
 	alpha.insert_via_file(fileToRead);
 	fileToRead.close();
 
