@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 
-#include "RedBlackTree.h"
+#include "BinarySortedTree.h"
 
 int main(int argc, char** argv)
 {
@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	RedBlackTree alpha;
+	BinarySortedTree alpha;
 
 	int key1 = 3;
 	int key2 = 1;
@@ -24,12 +24,11 @@ int main(int argc, char** argv)
 
 	int data = 5;
 
-
-	alpha.insert(key1, &data);
-	alpha.insert(key2, &data);
-	alpha.insert(key3, &data);
-	alpha.insert(key4, &data);
-	alpha.insert(key5, &data);
+	alpha.vine_insert(key1, &data);
+	alpha.vine_insert(key2, &data);
+	alpha.vine_insert(key3, &data);
+	alpha.vine_insert(key4, &data);
+	alpha.vine_insert(key5, &data);
 
 	return 0;
 }

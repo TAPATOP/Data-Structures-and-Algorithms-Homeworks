@@ -7,14 +7,15 @@
 
 #include <iostream>
 
-class RedBlackTree
+class BinarySortedTree
 {
 public:
-	RedBlackTree();
+	BinarySortedTree();
 
-	void insert(int key, void* data); // I don't really need to copy the data
+	void tree_insert(int key, void* data); // I don't really need to copy the data
+	void vine_insert(int key, void* data); // builds a binary search tree whose nodes are right only
 
-	~RedBlackTree();
+	~BinarySortedTree();
 private:
 	struct node
 	{
@@ -25,8 +26,6 @@ private:
 		node* right = nullptr;
 		void* data;
 		int key;
-
-		bool isRed = 1; // if (isRed == 0) the node is black
 	};
 
 	node* first;
