@@ -30,5 +30,6 @@ int main(int argc, char** argv)
 	alpha.vine_insert(key4, &data);
 	alpha.vine_insert(key5, &data);
 
+	alpha.left_rotate(key5, &data);
 	return 0;
 }
