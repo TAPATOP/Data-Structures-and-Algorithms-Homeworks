@@ -16,9 +16,9 @@ int main(int argc, char** argv)
 
 	BinarySortedTree alpha;
 
-	int key1 = 3;
-	int key2 = 1;
-	int key3 = 2;
+	int key1 = 1;
+	int key2 = 2;
+	int key3 = 3;
 	int key4 = 4;
 	int key5 = 5;
 
@@ -30,6 +30,7 @@ int main(int argc, char** argv)
 	alpha.vine_insert(key4, &data);
 	alpha.vine_insert(key5, &data);
 
-	alpha.left_rotate(key5, &data);
+	alpha.balance_DSW();
+
 	return 0;
 }

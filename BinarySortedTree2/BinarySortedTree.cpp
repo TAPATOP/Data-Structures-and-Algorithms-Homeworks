@@ -110,7 +110,49 @@ void BinarySortedTree::vine_insert(int key, void * data)
 
 void BinarySortedTree::balance_DSW()
 {
-	//left_rotate
+	if (first == nullptr)
+	{
+		std::cout << "You're trying to balance a nonexistant tree" << std::endl;
+		return;
+	}
+	// calculate the number of nodes on the lowest level //
+
+	int levelNodes = 1;
+	int remainingNodes = node::nodesCount;
+
+	while (remainingNodes >= levelNodes)
+	{
+		remainingNodes -= levelNodes;
+		levelNodes *= 2;
+	}
+	
+	// rotate the nodes that will find themselves on the lowest level //
+
+	node* currentNode = first;
+	node* nextNode = nullptr;
+	for (int i = 0; i < remainingNodes; i++)
+	{
+		nextNode = currentNode->right->right;
+		left_rotate(currentNode->key, currentNode->data);
+		currentNode = nextNode;
+	}
+
+	// rotate the remaining nodes //
+	currentNode = first;
+	while (currentNode != nullptr)
+	{
+		if (currentNode->right == nullptr)
+		{
+			nextNode = nullptr;
+		}
+		else
+		{
+			nextNode = currentNode->right->right;
+		}
+
+		left_rotate(currentNode->key, currentNode->data);
+		currentNode = nextNode;
+	}
 }
 
 
