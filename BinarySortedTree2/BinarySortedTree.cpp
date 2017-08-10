@@ -1,15 +1,20 @@
 #include "BinarySortedTree.h"
 
-int BinarySortedTree::node::nodesCount;
+template <typename T>
+int BinarySortedTree<T>::node::nodesCount;
 
-BinarySortedTree::BinarySortedTree()
+template class BinarySortedTree<char*>; // this way I avoid putting everything in a single file
+
+template <typename T>
+BinarySortedTree<T>::BinarySortedTree()
 {
 	first = nullptr;
 	node::nodesCount = 0;
 }
 
 // inserts without rebalancing
-void BinarySortedTree::tree_insert(int key, void * data)
+template <typename T>
+void BinarySortedTree<T>::tree_insert(int key, T& data)
 {
 	////////////////////
 	// TREE INITIALIZATION
@@ -57,7 +62,8 @@ void BinarySortedTree::tree_insert(int key, void * data)
 	}
 }
 
-void BinarySortedTree::vine_insert(int key, void * data)
+template <typename T>
+void BinarySortedTree<T>::vine_insert(int key, T& data)
 {
 	////////////////////
 	// VINE INITIALIZATION
@@ -108,7 +114,8 @@ void BinarySortedTree::vine_insert(int key, void * data)
 	}
 }
 
-void BinarySortedTree::balance_DSW()
+template <typename T>
+void BinarySortedTree<T>::balance_DSW()
 {
 	if (first == nullptr)
 	{
@@ -156,11 +163,13 @@ void BinarySortedTree::balance_DSW()
 }
 
 
-BinarySortedTree::~BinarySortedTree()
+template <typename T>
+BinarySortedTree<T>::~BinarySortedTree()
 {
 }
 
-void BinarySortedTree::left_rotate(int key, void * data)
+template <typename T>
+void BinarySortedTree<T>::left_rotate(int key, T& data)
 {
 	// gets parentNode and nodeForRotation //
 	
@@ -206,7 +215,8 @@ void BinarySortedTree::left_rotate(int key, void * data)
 	}
 }
 
-BinarySortedTree::node* BinarySortedTree::find_node(int key, void * data, node*& parentNode)
+template <typename T>
+typename BinarySortedTree<T>::node* BinarySortedTree<T>::find_node(int key, T& data, node*& parentNode)
 {
 	parentNode = nullptr;
 	node* currentNode = first;

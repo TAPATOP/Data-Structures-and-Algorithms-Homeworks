@@ -7,6 +7,7 @@
 
 #include <iostream>
 
+template <typename T>
 class BinarySortedTree
 {
 private: struct node;
@@ -14,28 +15,27 @@ private: struct node;
 public:
 	BinarySortedTree();
 
-	void tree_insert(int key, void* data); // I don't really need to copy the data
-	void vine_insert(int key, void* data); // builds a binary search tree whose nodes are right only
+	void tree_insert(int key, T& data); // I don't really need to copy the data
+	void vine_insert(int key, T& data); // builds a binary search tree whose nodes are right only
 
 	void balance_DSW();
 
 	~BinarySortedTree();
-//private: TODO
-public:
-	void left_rotate(int key, void* data);
+private:
+	void left_rotate(int key, T& data);
 
 	// returns the parent node cause it might also be needed( saves a pointer from each node)
-	node* find_node(int key, void* data, node*& parentNode);
+	node* find_node(int key, T& data, node*& parentNode);
 private:
 	struct node
 	{
-		node(int key, void* data) : key(key), data(data) { nodesCount++; }
+		node(int key, T& data) : key(key), data(data) { nodesCount++; }
 
 		~node() { nodesCount--; }
 
 		node* left = nullptr;
 		node* right = nullptr;
-		void* data;
+		T data;
 		int key;
 
 		static int nodesCount;

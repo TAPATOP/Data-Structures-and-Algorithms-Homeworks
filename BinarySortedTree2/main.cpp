@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 
 	std::ifstream input("file.txt", std::ios::in | std::ios::binary);
 
-	BinarySortedTree alpha;
+	BinarySortedTree<char*> alpha;
 
 	int key;
 	int dataSize = 0;
@@ -43,21 +43,7 @@ int main(int argc, char** argv)
 		}
 	} while (true);
 
-	//int key1 = 1;
-	//int key2 = 2;
-	//int key3 = 3;
-	//int key4 = 4;
-	//int key5 = 5;
-
-	//int data = 5;
-
-	//alpha.vine_insert(key1, &data);
-	//alpha.vine_insert(key2, &data);
-	//alpha.vine_insert(key3, &data);
-	//alpha.vine_insert(key4, &data);
-	//alpha.vine_insert(key5, &data);
-
-	//alpha.balance_DSW();
+	alpha.balance_DSW();
 
 	return 0;
 }
