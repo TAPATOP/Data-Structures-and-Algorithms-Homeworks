@@ -15,8 +15,12 @@ private: struct node;
 public:
 	BinarySortedTree();
 
-	void tree_insert(int key, T& data); // I don't really need to copy the data
+	void add(int key, T& data); // I don't really need to copy the data
 	void vine_insert(int key, T& data); // builds a binary search tree whose nodes are right only
+
+	void search(int key, T& data);
+
+	void remove(int key, T& data);
 
 	void balance_DSW();
 

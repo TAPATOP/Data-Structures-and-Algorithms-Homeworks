@@ -14,7 +14,7 @@ BinarySortedTree<T>::BinarySortedTree()
 
 // inserts without rebalancing
 template <typename T>
-void BinarySortedTree<T>::tree_insert(int key, T& data)
+void BinarySortedTree<T>::add(int key, T& data)
 {
 	////////////////////
 	// TREE INITIALIZATION
@@ -114,6 +114,120 @@ void BinarySortedTree<T>::vine_insert(int key, T& data)
 	}
 }
 
+template<typename T>
+void BinarySortedTree<T>::search(int key, T & data)
+{
+	node* trash = nullptr; // TODO: overload
+	if (find_node(key, data, trash) != nullptr)
+	{
+		std::cout << "true" << std::endl;
+		return;
+	}
+	std::cout << "false" << std::endl;
+}
+
+template<typename T>
+void BinarySortedTree<T>::remove(int key, T & data)
+{
+	// find the target node and it's parent //
+
+	node* nodeForDeletionParent = nullptr;
+	node* nodeForDeletion = find_node(key, data, nodeForDeletionParent);
+
+	if (nodeForDeletion == nullptr)
+	{
+		std::cout << "Deletion node doesnt exist" << std::endl; // TODO: remove this
+		return;
+	}
+
+	node* nodeForReplacement = nodeForDeletion;
+	node* nodeForReplacementParent = nodeForReplacement;
+
+	// find the node that will replace the deleted one //
+
+	if (nodeForDeletion->right != nullptr)
+	{
+		nodeForReplacement = nodeForDeletion->right;
+
+		while (nodeForReplacement->left != nullptr)
+		{
+			nodeForReplacementParent = nodeForReplacement;
+			nodeForReplacement = nodeForReplacement->left;
+		}
+	}
+
+	// node rotations //
+
+	// if we are trying to delete the root
+	if (nodeForDeletion == first)
+	{
+		// if the root doesnt have a right node
+		if (nodeForDeletion->right == nullptr)
+		{
+			first = nodeForDeletion->left;
+		}
+		// if the root's right node doesnt have a left node
+		else if (nodeForReplacementParent == nodeForDeletion && nodeForReplacement->left == nullptr)
+		{
+			nodeForReplacement->left = nodeForDeletion->left;
+			first = nodeForReplacement;
+		}
+		// if the root's right node has a left node
+		else
+		{
+			nodeForReplacementParent->left = nodeForReplacement->right;  
+			first = nodeForReplacement;
+			nodeForReplacement->left = nodeForDeletion->left;
+			nodeForReplacement->right = nodeForDeletion->right;
+		}
+	}
+	else
+	{
+		// if the node for deletion doesnt have a right node
+		if (nodeForDeletion->right == nullptr)
+		{
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForDeletion->left;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForDeletion->left;
+			}
+		}
+		// if the node for deletion has a right node that doesnt have a left node
+		else if (nodeForDeletion == nodeForReplacementParent)
+		{
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForReplacement;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForReplacement;
+			}
+			nodeForReplacement->left = nodeForDeletion->left;
+		}
+		// if the node for deletion has a right node and that has a left node
+		else
+		{
+			nodeForReplacementParent->left = nodeForReplacement->right;
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForReplacement;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForReplacement;
+			}
+			nodeForReplacement->left = nodeForDeletion->left;
+			nodeForReplacement->right = nodeForDeletion->right;
+		}
+	}
+
+	delete nodeForDeletion;
+}
+
 template <typename T>
 void BinarySortedTree<T>::balance_DSW()
 {
@@ -132,7 +246,10 @@ void BinarySortedTree<T>::balance_DSW()
 		remainingNodes -= levelNodes;
 		levelNodes *= 2;
 	}
-	
+
+	// this is the actual number of nodes on the lowest full level
+	levelNodes--;
+
 	// rotate the nodes that will find themselves on the lowest level //
 
 	node* currentNode = first;
@@ -143,22 +260,34 @@ void BinarySortedTree<T>::balance_DSW()
 		left_rotate(currentNode->key, currentNode->data);
 		currentNode = nextNode;
 	}
+	// notice that now we always have 2^n - 1 nodes as the "vine", where "n" is the depth of the lowest full level
 
 	// rotate the remaining nodes //
+	int counter = 0;
 	currentNode = first;
-	while (currentNode != nullptr)
+	while (levelNodes > 1)
 	{
-		if (currentNode->right == nullptr)
-		{
-			nextNode = nullptr;
-		}
-		else
-		{
-			nextNode = currentNode->right->right;
-		}
+		levelNodes /= 2;
+		counter = 0;
 
-		left_rotate(currentNode->key, currentNode->data);
-		currentNode = nextNode;
+		currentNode = first;
+
+		while (currentNode != nullptr && counter < levelNodes)
+		{
+			if (currentNode->right == nullptr)
+			{
+				nextNode = nullptr;
+			}
+			else
+			{
+				nextNode = currentNode->right->right;
+			}
+
+			left_rotate(currentNode->key, currentNode->data);
+			counter++;
+
+			currentNode = nextNode;
+		}
 	}
 }
 
