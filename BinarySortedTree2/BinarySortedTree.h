@@ -24,7 +24,7 @@ public:
 public:
 	void left_rotate(int key, void* data);
 
-	// returns the parent node cause it's also needed( saves a pointer from each node)
+	// returns the parent node cause it might also be needed( saves a pointer from each node)
 	node* find_node(int key, void* data, node*& parentNode);
 private:
 	struct node
