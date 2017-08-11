@@ -6,6 +6,7 @@
 int main(int argc, char** argv)
 {
 	//std::ofstream output("binary.txt", std::ios::out | std::ios::binary);
+	//char* text = "asss";
 
 	//if (!output.is_open())
 	//{
@@ -13,21 +14,36 @@ int main(int argc, char** argv)
 	//	return 1;
 	//}
 	//int a = 97;
-	//int b = 80;
-	//output.write((char*)&a, sizeof(int));
-
-	//output.write((char*)&b, sizeof(int));
+	//int b = sizeof(text);
+	//for (int i = 1; i < 10; i++)
+	//{
+	//	output.write((char*)&i, sizeof(int));
+	//	output.write((char*)&b, sizeof(int));
+	//	output.write(text, b);
+	//}
 	//output.close();
 
-	//std::ifstream input("binary.txt", std::ios::in | std::ios::binary);
+	//std::ifstream input2("binary.txt", std::ios::in | std::ios::binary);
+	//
+	//for (int i = 0; i < 9; i++)
+	//{
+	//	input2.read((char*)&a, sizeof(int));
+	//	std::cout << a << " ";
+	//	
+	//	input2.read((char*)&a, sizeof(int));
+	//	std::cout << a << " ";
 
-	//input.read((char*)a, sizeof(int));
+	//	char* text = new char[a + 1];
+	//	input2.read(text, a);
+	//	text[a] = 0;
+	//	std::cout << text << std::endl;
+	//}
 
-	//std::cout << a << " " << b << std::endl;
+	// testing end //
 
-	argv[1] = "file2.txt";
+	argv[1] = "binary.txt";
 	argc = 2;
-
+	
 	if (argc != 2)
 	{
 		std::cout << "Pls read the instructions thx" << std::endl;
@@ -41,18 +57,18 @@ int main(int argc, char** argv)
 	int key;
 	int dataSize = 0;
 
-	char* data;
+	char* data = nullptr;
 
-	while (true)
+	while(true)
 	{
-		input >> key;
-		input >> dataSize;
+		input.read((char*)&key, sizeof(int));
 
-		input.get(); // TODO: flushes empty space, must be removed when i start properly reading a binary file
+		input.read((char*)&dataSize, sizeof(int));
 
 		data = new char[dataSize + 1];
-		data[dataSize] = 0;
 		input.read(data, dataSize);
+		data[dataSize] = 0;
+		
 		if (!input.eof())
 		{
 			alpha.vine_insert(key, data);
@@ -61,7 +77,26 @@ int main(int argc, char** argv)
 		{
 			break;
 		}
-	} 
+	}
+	//while (true)
+	//{
+	//	input >> key;
+	//	input >> dataSize;
+
+	//	input.get(); // TODO: flushes empty space, must be removed when i start properly reading a binary file
+
+	//	data = new char[dataSize + 1];
+	//	data[dataSize] = 0;
+	//	input.read(data, dataSize);
+	//	if (!input.eof())
+	//	{
+	//		alpha.vine_insert(key, data);
+	//	}
+	//	else
+	//	{
+	//		break;
+	//	}
+	//} 
 
 	alpha.balance_DSW();
 
@@ -69,7 +104,23 @@ int main(int argc, char** argv)
 	rdata[0] = '1';
 	rdata[1] = 0;
 
-	alpha.remove(9, rdata);
+	int t = 1;
+	int stop = 0;
+	while (stop < 50000)
+	{
+		BinarySortedTree<int> test;
+		for (int i = 0; i < 100; i++)
+		{
+			test.add(i, t);
+		}
+		stop++;
+	}
+
+	//for(int i = 0;; i++)
+	//{
+	//	alpha.add(69, rdata);
+	//	alpha.remove(69, rdata);
+	//}
 
 	return 0;
 }

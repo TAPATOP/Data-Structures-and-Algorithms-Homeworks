@@ -18,7 +18,6 @@ public:
 	void vine_insert(int key, T data); // builds a binary search tree whose nodes are right only
 
 	void search(int key, T& data);
-
 	void remove(int key, T data);
 
 	void balance_DSW();
@@ -35,7 +34,12 @@ private:
 	{
 		node(int key, T& data) : key(key), data(data) { nodesCount++; }
 
-		~node() { nodesCount--; }
+		~node() 
+		{ 
+			nodesCount--; 
+			if (left != nullptr) delete left;
+			if (right != nullptr) delete right;
+		}
 
 		node* left = nullptr;
 		node* right = nullptr;

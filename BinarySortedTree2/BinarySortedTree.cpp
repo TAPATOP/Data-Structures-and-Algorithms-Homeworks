@@ -3,6 +3,7 @@ template <typename T>
 int BinarySortedTree<T>::node::nodesCount;
 
 template class BinarySortedTree<char*>; // this way I avoid putting everything in the header
+template class BinarySortedTree<int>;
 
 template <typename T>
 BinarySortedTree<T>::BinarySortedTree()
@@ -293,6 +294,7 @@ void BinarySortedTree<T>::balance_DSW()
 template <typename T>
 BinarySortedTree<T>::~BinarySortedTree()
 {
+	if (first != nullptr) delete first;
 }
 
 template <typename T>
