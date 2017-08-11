@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
 	//std::cout << a << " " << b << std::endl;
 
-	argv[1] = "file.txt";
+	argv[1] = "file2.txt";
 	argc = 2;
 
 	if (argc != 2)
@@ -34,7 +34,7 @@ int main(int argc, char** argv)
 		return 1;
 	}
 
-	std::ifstream input("file.txt", std::ios::in | std::ios::binary);
+	std::ifstream input(argv[1], std::ios::in | std::ios::binary);
 
 	BinarySortedTree<char*> alpha;
 
@@ -65,6 +65,10 @@ int main(int argc, char** argv)
 
 	alpha.balance_DSW();
 
+	char* rdata = new char[2];
+	rdata[0] = 'a';
+
+	alpha.remove(9, rdata);
 
 	return 0;
 }

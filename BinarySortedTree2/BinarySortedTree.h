@@ -30,6 +30,7 @@ private:
 
 	// returns the parent node cause it might also be needed( saves a pointer from each node)
 	node* find_node(int key, T& data, node*& parentNode);
+	//template<> node* find_node<double>(int key, char* data, node*& parentNode);
 private:
 	struct node
 	{

@@ -4,6 +4,7 @@ template <typename T>
 int BinarySortedTree<T>::node::nodesCount;
 
 template class BinarySortedTree<char*>; // this way I avoid putting everything in a single file
+template class BinarySortedTree<int>;
 
 template <typename T>
 BinarySortedTree<T>::BinarySortedTree()
