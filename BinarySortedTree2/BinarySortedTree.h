@@ -14,8 +14,12 @@ private: struct node;
 public:
 	BinarySortedTree();
 
-	void add(int key, T& data); // I don't really need to copy the data
-	void vine_insert(int key, T& data); // builds a binary search tree whose nodes are right only
+	// adds an element; I don't really need to copy the data so i'll just point to the object
+	void add(int key, T& data); 
+
+	// builds a binary search tree whose nodes are right only, e.g. a list, i know insertion in this
+	// way is slower but i cant dedicate time to make it work by converting a tree to a vine
+	void vine_insert(int key, T& data);
 
 	void search(int key, T& data);
 	bool remove(int key, T& data);

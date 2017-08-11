@@ -5,42 +5,6 @@
 
 int main(int argc, char** argv)
 {
-	std::ofstream output("binary.txt", std::ios::out | std::ios::binary);
-	char* text = "asss";
-	
-	if (!output.is_open())
-	{
-		std::cout << "Something fucked up" << std::endl;
-		return 1;
-	}
-	int a = 97;
-	int b = sizeof(text);
-	for (int i = 2; i <= 32; i++)
-	{
-		output.write((char*)&i, sizeof(int));
-		output.write((char*)&b, sizeof(int));
-		output.write(text, b);
-	}
-	output.close();
-
-	//std::ifstream input2("binary.txt", std::ios::in | std::ios::binary);
-	//
-	//for (int i = 0; i < 9; i++)
-	//{
-	//	input2.read((char*)&a, sizeof(int));
-	//	std::cout << a << " ";
-	//	
-	//	input2.read((char*)&a, sizeof(int));
-	//	std::cout << a << " ";
-
-	//	char* text = new char[a + 1];
-	//	input2.read(text, a);
-	//	text[a] = 0;
-	//	std::cout << text << std::endl;
-	//}
-
-	// testing end //
-
 	argv[1] = "binary.txt";
 	argc = 2;
 	
@@ -78,39 +42,110 @@ int main(int argc, char** argv)
 			break;
 		}
 	}
-	//while (true)
-	//{
-	//	input >> key;
-	//	input >> dataSize;
-
-	//	input.get(); // TODO: flushes empty space, must be removed when i start properly reading a binary file
-
-	//	data = new char[dataSize + 1];
-	//	data[dataSize] = 0;
-	//	input.read(data, dataSize);
-	//	if (!input.eof())
-	//	{
-	//		alpha.vine_insert(key, data);
-	//	}
-	//	else
-	//	{
-	//		break;
-	//	}
-	//} 
-	data = "aw";
-	for (int i = 0; i < 4; i++)
-		alpha.vine_insert(69, data);
 
 	alpha.balance_DSW();
 
-	int tkey = 69;
-	char* tdata = new char[2];
-	tdata = "asss";
+	char* commandName = new char[10];
+	int inputKey;
+	char* inputKeyString = new char[15];
+	char* inputData = new char [200];
 
-	// alpha.add(tkey, tdata);
-	// alpha.remove(tkey, tdata);
-	alpha.remove_all(69);
-	// alpha.search(tkey, tdata);
+	int i = 0;
+	int j = 0;
+
+	char* commandLine = new char [201];
+
+	// interface part //
+
+	// keep in mind it's not 100% idiot proof 
+	while (!(std::cin.eof()))
+	{
+		i = 0;
+		j = 0;
+
+		// commenting this comment in case of automatisation
+		// std::cout << "Give query: \n0: exit \n1: add <key> <data> \n2: remove <key> <data> \n3: removeall <key> \n4: search <key> <data>\n";
+		
+		
+		std::cin.getline(commandLine, 200);
+
+		int commandLineSize = strlen(commandLine);
+
+		// get command's name
+		while (commandLine[i] != ' ' && i <= commandLineSize)
+		{
+			commandName[j++] = commandLine[i++];
+		}
+		commandName[j] = 0;
+		i++;
+		j = 0;
+
+		// stop if something has messed up with the input
+		if (i > commandLineSize)
+		{
+			continue;
+		}
+
+		// get key
+		while (commandLine[i] != ' ' && i <= commandLineSize)
+		{
+			inputKeyString[j++] = commandLine[i++];
+		}
+		inputKeyString[j] = 0;
+
+		// beware this will set inputKey to 0 if the string isnt a number
+		inputKey = atoi(inputKeyString);
+
+		i++;
+		j = 0;
+
+		// read data if command requires it
+		if (strcmp(commandName, "removeall") != 0)
+		{
+			while (commandLine[i] != 0)
+			{
+				inputData[j++] = commandLine[i++];
+			}
+			inputData[j] = 0;
+		}
+
+		// choose command and execute
+		if (strcmp(commandName, "add") == 0)
+		{
+			alpha.add(inputKey, inputData);
+		}
+		else if (strcmp(commandName, "remove") == 0)
+		{
+			alpha.remove(inputKey, inputData);
+		}
+		else if (strcmp(commandName, "removeall") == 0)
+		{
+			alpha.remove_all(inputKey);
+		}
+		else if (strcmp(commandName, "search") == 0)
+		{
+			alpha.search(inputKey, inputData);
+		}
+	}
 
 	return 0;
 }
+
+
+//std::ofstream output("binary.txt", std::ios::out | std::ios::binary);
+//char* text = "asss";
+//
+//if (!output.is_open())
+//{
+//	std::cout << "Something fucked up" << std::endl;
+//	return 1;
+//}
+//int a = 97;
+//int b = sizeof(text);
+//for (int i = 2; i <= 32; i++)
+//{
+//	output.write((char*)&i, sizeof(int));
+//	output.write((char*)&b, sizeof(int));
+//	output.write(text, b);
+//}
+//output.close();

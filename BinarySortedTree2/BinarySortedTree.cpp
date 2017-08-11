@@ -136,7 +136,7 @@ bool BinarySortedTree<T>::remove(int key, T& data)
 
 	if (nodeForDeletion == nullptr)
 	{
-		std::cout << "Deletion node doesnt exist" << std::endl; // TODO: remove this
+		std::cout << "false" << std::endl;
 		return 0;
 	}
 
@@ -186,7 +186,7 @@ bool BinarySortedTree<T>::remove(int key, T& data)
 		// if the node for deletion doesnt have a right node
 		if (nodeForDeletion->right == nullptr)
 		{
-			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			if (nodeForDeletionParent->right == nodeForDeletion)
 			{
 				nodeForDeletionParent->right = nodeForDeletion->left;
 			}
@@ -198,7 +198,7 @@ bool BinarySortedTree<T>::remove(int key, T& data)
 		// if the node for deletion has a right node that doesnt have a left node
 		else if (nodeForDeletion == nodeForReplacementParent)
 		{
-			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			if (nodeForDeletionParent->right < nodeForDeletion)
 			{
 				nodeForDeletionParent->right = nodeForReplacement;
 			}
@@ -212,7 +212,7 @@ bool BinarySortedTree<T>::remove(int key, T& data)
 		else
 		{
 			nodeForReplacementParent->left = nodeForReplacement->right;
-			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			if (nodeForDeletionParent->right < nodeForDeletion)
 			{
 				nodeForDeletionParent->right = nodeForReplacement;
 			}
@@ -230,6 +230,7 @@ bool BinarySortedTree<T>::remove(int key, T& data)
 	nodeForDeletion->right = nullptr;
 	delete nodeForDeletion;
 
+	std::cout << "true" << std::endl;
 	return 1;
 }
 
@@ -251,7 +252,7 @@ void BinarySortedTree<T>::balance_DSW()
 {
 	if (first == nullptr)
 	{
-		std::cout << "You're trying to balance a nonexistant tree" << std::endl;
+		// std::cout << "You're trying to balance a nonexistant tree" << std::endl;
 		return;
 	}
 	// calculate the number of nodes on the lowest level //
@@ -327,7 +328,7 @@ void BinarySortedTree<T>::left_rotate(int key, T& data)
 
 	if (nodeForRotation == nullptr)
 	{
-		std::cout << "This node doesnt exist bro" << std::endl;
+		// std::cout << "This node doesnt exist bro" << std::endl;
 		return;
 	}
 
@@ -416,7 +417,7 @@ bool BinarySortedTree<T>::remove(int key)
 
 	if (nodeForDeletion == nullptr)
 	{
-		std::cout << "Deletion node doesnt exist" << std::endl; // TODO: remove this
+		// std::cout << "Deletion node doesnt exist" << std::endl;
 		return 0;
 	}
 
