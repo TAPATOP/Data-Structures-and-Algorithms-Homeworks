@@ -15,10 +15,11 @@ public:
 	BinarySortedTree();
 
 	void add(int key, T& data); // I don't really need to copy the data
-	void vine_insert(int key, T data); // builds a binary search tree whose nodes are right only
+	void vine_insert(int key, T& data); // builds a binary search tree whose nodes are right only
 
 	void search(int key, T& data);
-	void remove(int key, T data);
+	bool remove(int key, T& data);
+	void remove_all(int key);
 
 	void balance_DSW();
 
@@ -28,7 +29,9 @@ private:
 
 	// returns the parent node cause it might also be needed( saves a pointer from each node)
 	node* find_node(int key, T& data, node*& parentNode);
-	//node* find_node(int key, char* data, node*& parentNode);
+
+	node* find_node(int key, node*& parentNode);
+	bool remove(int key);
 private:
 	struct node
 	{

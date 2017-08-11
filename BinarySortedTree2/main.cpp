@@ -5,23 +5,23 @@
 
 int main(int argc, char** argv)
 {
-	//std::ofstream output("binary.txt", std::ios::out | std::ios::binary);
-	//char* text = "asss";
-
-	//if (!output.is_open())
-	//{
-	//	std::cout << "Something fucked up" << std::endl;
-	//	return 1;
-	//}
-	//int a = 97;
-	//int b = sizeof(text);
-	//for (int i = 1; i < 10; i++)
-	//{
-	//	output.write((char*)&i, sizeof(int));
-	//	output.write((char*)&b, sizeof(int));
-	//	output.write(text, b);
-	//}
-	//output.close();
+	std::ofstream output("binary.txt", std::ios::out | std::ios::binary);
+	char* text = "asss";
+	
+	if (!output.is_open())
+	{
+		std::cout << "Something fucked up" << std::endl;
+		return 1;
+	}
+	int a = 97;
+	int b = sizeof(text);
+	for (int i = 2; i <= 32; i++)
+	{
+		output.write((char*)&i, sizeof(int));
+		output.write((char*)&b, sizeof(int));
+		output.write(text, b);
+	}
+	output.close();
 
 	//std::ifstream input2("binary.txt", std::ios::in | std::ios::binary);
 	//
@@ -97,30 +97,20 @@ int main(int argc, char** argv)
 	//		break;
 	//	}
 	//} 
+	data = "aw";
+	for (int i = 0; i < 4; i++)
+		alpha.vine_insert(69, data);
 
 	alpha.balance_DSW();
 
-	char* rdata = new char[2];
-	rdata[0] = '1';
-	rdata[1] = 0;
+	int tkey = 69;
+	char* tdata = new char[2];
+	tdata = "asss";
 
-	int t = 1;
-	int stop = 0;
-	while (stop < 50000)
-	{
-		BinarySortedTree<int> test;
-		for (int i = 0; i < 100; i++)
-		{
-			test.add(i, t);
-		}
-		stop++;
-	}
-
-	//for(int i = 0;; i++)
-	//{
-	//	alpha.add(69, rdata);
-	//	alpha.remove(69, rdata);
-	//}
+	// alpha.add(tkey, tdata);
+	// alpha.remove(tkey, tdata);
+	alpha.remove_all(69);
+	// alpha.search(tkey, tdata);
 
 	return 0;
 }

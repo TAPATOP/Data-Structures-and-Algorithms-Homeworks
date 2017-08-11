@@ -63,7 +63,7 @@ void BinarySortedTree<T>::add(int key, T& data)
 }
 
 template <typename T>
-void BinarySortedTree<T>::vine_insert(int key, T data)
+void BinarySortedTree<T>::vine_insert(int key, T& data)
 {
 	////////////////////
 	// VINE INITIALIZATION
@@ -127,7 +127,7 @@ void BinarySortedTree<T>::search(int key, T & data)
 }
 
 template<typename T>
-void BinarySortedTree<T>::remove(int key, T  data)
+bool BinarySortedTree<T>::remove(int key, T& data)
 {
 	// find the target node and it's parent //
 
@@ -137,7 +137,7 @@ void BinarySortedTree<T>::remove(int key, T  data)
 	if (nodeForDeletion == nullptr)
 	{
 		std::cout << "Deletion node doesnt exist" << std::endl; // TODO: remove this
-		return;
+		return 0;
 	}
 
 	node* nodeForReplacement = nodeForDeletion;
@@ -225,7 +225,25 @@ void BinarySortedTree<T>::remove(int key, T  data)
 		}
 	}
 
+	// prevent cascade deletion and then delete //
+	nodeForDeletion->left = nullptr;
+	nodeForDeletion->right = nullptr;
 	delete nodeForDeletion;
+
+	return 1;
+}
+
+template<typename T>
+void BinarySortedTree<T>::remove_all(int key)
+{
+	int counter = 0;
+
+	while (remove(key))
+	{
+		counter++;
+	}
+
+	std::cout << counter << std::endl;
 }
 
 template <typename T>
@@ -366,3 +384,132 @@ typename BinarySortedTree<T>::node* BinarySortedTree<T>::find_node(int key, T& d
 	return currentNode;
 }
 
+template<typename T>
+typename BinarySortedTree<T>::node* BinarySortedTree<T>::find_node(int key, node *& parentNode)
+{
+	parentNode = nullptr;
+	node* currentNode = first;
+
+	while (currentNode != nullptr && !(currentNode->key == key) )
+	{
+		parentNode = currentNode;
+		if (key < currentNode->key)
+		{
+			currentNode = currentNode->left;
+		}
+		else
+		{
+			currentNode = currentNode->right;
+		}
+	}
+
+	return currentNode;
+}
+
+template<typename T>
+bool BinarySortedTree<T>::remove(int key)
+{
+	// find the target node and it's parent //
+
+	node* nodeForDeletionParent = nullptr;
+	node* nodeForDeletion = find_node(key, nodeForDeletionParent);
+
+	if (nodeForDeletion == nullptr)
+	{
+		std::cout << "Deletion node doesnt exist" << std::endl; // TODO: remove this
+		return 0;
+	}
+
+	node* nodeForReplacement = nodeForDeletion;
+	node* nodeForReplacementParent = nodeForReplacement;
+
+	// find the node that will replace the deleted one //
+
+	if (nodeForDeletion->right != nullptr)
+	{
+		nodeForReplacement = nodeForDeletion->right;
+
+		while (nodeForReplacement->left != nullptr)
+		{
+			nodeForReplacementParent = nodeForReplacement;
+			nodeForReplacement = nodeForReplacement->left;
+		}
+	}
+
+	// node rotations //
+
+	// if we are trying to delete the root
+	if (nodeForDeletion == first)
+	{
+		// if the root doesnt have a right node
+		if (nodeForDeletion->right == nullptr)
+		{
+			first = nodeForDeletion->left;
+		}
+		// if the root's right node doesnt have a left node
+		else if (nodeForReplacementParent == nodeForDeletion && nodeForReplacement->left == nullptr)
+		{
+			nodeForReplacement->left = nodeForDeletion->left;
+			first = nodeForReplacement;
+		}
+		// if the root's right node has a left node
+		else
+		{
+			nodeForReplacementParent->left = nodeForReplacement->right;
+			first = nodeForReplacement;
+			nodeForReplacement->left = nodeForDeletion->left;
+			nodeForReplacement->right = nodeForDeletion->right;
+		}
+	}
+	else
+	{
+		// if the node for deletion doesnt have a right node
+		if (nodeForDeletion->right == nullptr)
+		{
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForDeletion->left;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForDeletion->left;
+			}
+		}
+		// if the node for deletion has a right node that doesnt have a left node
+		else if (nodeForDeletion == nodeForReplacementParent)
+		{
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForReplacement;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForReplacement;
+			}
+			nodeForReplacement->left = nodeForDeletion->left;
+		}
+		// if the node for deletion has a right node and that has a left node
+		else
+		{
+			nodeForReplacementParent->left = nodeForReplacement->right;
+			if (nodeForDeletionParent->key < nodeForDeletion->key)
+			{
+				nodeForDeletionParent->right = nodeForReplacement;
+			}
+			else
+			{
+				nodeForDeletionParent->left = nodeForReplacement;
+			}
+			nodeForReplacement->left = nodeForDeletion->left;
+			nodeForReplacement->right = nodeForDeletion->right;
+		}
+	}
+
+	// prevent cascade deletion and delete //
+
+	nodeForDeletion->left = nullptr;
+	nodeForDeletion->right = nullptr;
+	delete nodeForDeletion;
+
+	return 1;
+}
