@@ -1,8 +1,7 @@
 #pragma once
 
 ////////////////
-// Please consider this is not a fully working RBT, since it doesnt support self- balancing deletion, it
-// uses a standard Binary Search Tree-tier deletion
+// A Binary Search Tree that uses Day Stout Warren for balancing
 ////////////////
 
 #include <iostream>
@@ -16,11 +15,11 @@ public:
 	BinarySortedTree();
 
 	void add(int key, T& data); // I don't really need to copy the data
-	void vine_insert(int key, T& data); // builds a binary search tree whose nodes are right only
+	void vine_insert(int key, T data); // builds a binary search tree whose nodes are right only
 
 	void search(int key, T& data);
 
-	void remove(int key, T& data);
+	void remove(int key, T data);
 
 	void balance_DSW();
 
@@ -30,7 +29,7 @@ private:
 
 	// returns the parent node cause it might also be needed( saves a pointer from each node)
 	node* find_node(int key, T& data, node*& parentNode);
-	//template<> node* find_node<double>(int key, char* data, node*& parentNode);
+	//node* find_node(int key, char* data, node*& parentNode);
 private:
 	struct node
 	{
@@ -49,3 +48,25 @@ private:
 	node* first;
 };
 
+// if this is in the cpp file it throws an error ???
+template <>
+inline typename BinarySortedTree<char*>::node* BinarySortedTree<char*>::find_node(int key, char*& data, node*& parentNode)
+{
+	parentNode = nullptr;
+	node* currentNode = first;
+
+	while (currentNode != nullptr && !(currentNode->key == key && !strcmp(currentNode->data, data)))
+	{
+		parentNode = currentNode;
+		if (key < currentNode->key)
+		{
+			currentNode = currentNode->left;
+		}
+		else
+		{
+			currentNode = currentNode->right;
+		}
+	}
+
+	return currentNode;
+}

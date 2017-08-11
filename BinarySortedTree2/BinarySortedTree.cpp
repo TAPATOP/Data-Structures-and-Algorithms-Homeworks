@@ -1,10 +1,8 @@
 #include "BinarySortedTree.h"
-
 template <typename T>
 int BinarySortedTree<T>::node::nodesCount;
 
-template class BinarySortedTree<char*>; // this way I avoid putting everything in a single file
-template class BinarySortedTree<int>;
+template class BinarySortedTree<char*>; // this way I avoid putting everything in the header
 
 template <typename T>
 BinarySortedTree<T>::BinarySortedTree()
@@ -64,7 +62,7 @@ void BinarySortedTree<T>::add(int key, T& data)
 }
 
 template <typename T>
-void BinarySortedTree<T>::vine_insert(int key, T& data)
+void BinarySortedTree<T>::vine_insert(int key, T data)
 {
 	////////////////////
 	// VINE INITIALIZATION
@@ -75,7 +73,7 @@ void BinarySortedTree<T>::vine_insert(int key, T& data)
 		first = new node(key, data);
 		return;
 	}
-	
+
 	/////////////////////
 	// FIND newNode ADDRESS
 	/////////////////////
@@ -128,7 +126,7 @@ void BinarySortedTree<T>::search(int key, T & data)
 }
 
 template<typename T>
-void BinarySortedTree<T>::remove(int key, T & data)
+void BinarySortedTree<T>::remove(int key, T  data)
 {
 	// find the target node and it's parent //
 
@@ -176,7 +174,7 @@ void BinarySortedTree<T>::remove(int key, T & data)
 		// if the root's right node has a left node
 		else
 		{
-			nodeForReplacementParent->left = nodeForReplacement->right;  
+			nodeForReplacementParent->left = nodeForReplacement->right;
 			first = nodeForReplacement;
 			nodeForReplacement->left = nodeForDeletion->left;
 			nodeForReplacement->right = nodeForDeletion->right;
@@ -292,7 +290,6 @@ void BinarySortedTree<T>::balance_DSW()
 	}
 }
 
-
 template <typename T>
 BinarySortedTree<T>::~BinarySortedTree()
 {
@@ -302,12 +299,12 @@ template <typename T>
 void BinarySortedTree<T>::left_rotate(int key, T& data)
 {
 	// gets parentNode and nodeForRotation //
-	
+
 	node* parentNode = nullptr;
 	node* nodeForRotation = find_node(key, data, parentNode);
 
 	// verifies you can rotate the found node //
-	
+
 	if (nodeForRotation == nullptr)
 	{
 		std::cout << "This node doesnt exist bro" << std::endl;
@@ -351,7 +348,7 @@ typename BinarySortedTree<T>::node* BinarySortedTree<T>::find_node(int key, T& d
 	parentNode = nullptr;
 	node* currentNode = first;
 
-	while (currentNode != nullptr && !(currentNode->key == key && currentNode->data == data) )
+	while (currentNode != nullptr && !(currentNode->key == key && currentNode->data == data))
 	{
 		parentNode = currentNode;
 		if (key < currentNode->key)
@@ -366,3 +363,4 @@ typename BinarySortedTree<T>::node* BinarySortedTree<T>::find_node(int key, T& d
 
 	return currentNode;
 }
+

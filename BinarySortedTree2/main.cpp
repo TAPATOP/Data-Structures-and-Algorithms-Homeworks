@@ -66,7 +66,8 @@ int main(int argc, char** argv)
 	alpha.balance_DSW();
 
 	char* rdata = new char[2];
-	rdata[0] = 'a';
+	rdata[0] = '1';
+	rdata[1] = 0;
 
 	alpha.remove(9, rdata);
 
